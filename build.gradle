@@ -1,0 +1,29 @@
+plugins {
+    // 26.x is unobfuscated: the non-remapping Loom plugin id
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'maven-publish'
+}
+
+version = project.mod_version
+group = project.maven_group
+base { archivesName = project.archives_base_name }
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    // no mappings line: official Mojang names, no remapping
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+processResources {
+    inputs.property "version", project.version
+    filesMatching("fabric.mod.json") { expand "version": project.version }
+}
+
+// Minecraft 26.x ships Java 25 class files; javac must target >= 25 to read them.
+tasks.withType(JavaCompile).configureEach { options.release = 25 }
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+    withSourcesJar()
+}

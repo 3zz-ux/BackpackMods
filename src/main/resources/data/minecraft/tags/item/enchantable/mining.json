@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "backpackmod:wooden_hammer",
+    "backpackmod:stone_hammer",
+    "backpackmod:iron_hammer",
+    "backpackmod:golden_hammer",
+    "backpackmod:diamond_hammer",
+    "backpackmod:netherite_hammer"
+  ]
+}

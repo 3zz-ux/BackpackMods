@@ -1,0 +1,15 @@
+{
+  "item.backpackmod.leather_backpack": "Leather Backpack",
+  "item.backpackmod.iron_backpack": "Iron Backpack",
+  "item.backpackmod.golden_backpack": "Golden Backpack",
+  "item.backpackmod.diamond_backpack": "Diamond Backpack",
+  "item.backpackmod.netherite_backpack": "Netherite Backpack",
+  "item.backpackmod.wooden_hammer": "Wooden Hammer",
+  "item.backpackmod.stone_hammer": "Stone Hammer",
+  "item.backpackmod.iron_hammer": "Iron Hammer",
+  "item.backpackmod.golden_hammer": "Golden Hammer",
+  "item.backpackmod.diamond_hammer": "Diamond Hammer",
+  "item.backpackmod.netherite_hammer": "Netherite Hammer",
+  "key.backpackmod.open": "Open Backpack",
+  "key.category.backpackmod.main": "BackpackMod"
+}

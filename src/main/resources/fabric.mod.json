@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "backpackmod",
+  "version": "${version}",
+  "name": "BackpackMod",
+  "description": "Tiered backpacks, unbreakable AOE hammers, tree felling, vein mining, fast smelting and 6x XP.",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.backpackmod.BackpackMod"],
+    "client": ["com.backpackmod.client.BackpackClient"]
+  },
+  "mixins": ["backpackmod.mixins.json"],
+  "depends": {
+    "fabricloader": ">=0.19.3",
+    "minecraft": "~26.2",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "required": true,
+  "package": "com.backpackmod.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": ["AbstractContainerMenuMixin", "AbstractCookingRecipeMixin", "InventoryMenuMixin", "ExperienceOrbAccessor"],
+  "client": ["AvatarRenderStateMixin", "AvatarRendererMixin"],
+  "injectors": { "defaultRequire": 1 }
+}
