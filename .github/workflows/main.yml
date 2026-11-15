@@ -23,51 +23,49 @@ jobs:
         with:
           gradle-version: '9.5.1'
 
-      - name: Auto-Patch and Build Mod
+      - name: Auto-Fix 26.2 Code and Build
         run: |
-          echo "=== 1. تصحيح build.gradle لاستخدام modImplementation ==="
-          sed -i 's/implementation "net.fabricmc.fabric-api:fabric-api/modImplementation "net.fabricmc.fabric-api:fabric-api/g' build.gradle
-          sed -i 's/implementation "net.fabricmc:fabric-loader/modImplementation "net.fabricmc:fabric-loader/g' build.gradle
-
-          echo "=== 2. فحص وتصحيح كود الجافا تلقائياً ==="
+          echo "=== 1. تصحيح مسميات كود الجافا لنسخة 26.2 ==="
           python3 -c "
           import os, re
 
-          # تصحيح دالة الواجهة والصلاحيات
-          screen_file = 'src/main/java/com/backpackmod/client/BackpackScreen.java'
-          if os.path.exists(screen_file):
-              with open(screen_file, 'r') as f:
-                  txt = f.read()
-              txt = txt.replace('protected void extractBackground', 'public void extractBackground')
-              # تعطيل المتغيرات الثابتة إذا كانت تسبب خطأ final
-              txt = re.sub(r'(this\.imageWidth\s*=\s*[^;]+;)', r'// \1', txt)
-              txt = re.sub(r'(this\.imageHeight\s*=\s*[^;]+;)', r'// \1', txt)
-              with open(screen_file, 'w') as f:
-                  f.write(txt)
-              print('Patched BackpackScreen.java')
+          for root, _, files in os.walk('src'):
+              for f in files:
+                  if f.endswith('.java'):
+                      p = os.path.join(root, f)
+                      with open(p, 'r', encoding='utf-8') as file:
+                          code = file.read()
+                      orig = code
 
-          # تصحيح تاقات كرات الـ XP
-          mod_file = 'src/main/java/com/backpackmod/BackpackMod.java'
-          if os.path.exists(mod_file):
-              with open(mod_file, 'r') as f:
-                  txt = f.read()
-              txt = txt.replace('orb.getTags()', 'orb.getScoreboardTags()')
-              with open(mod_file, 'w') as f:
-                  f.write(txt)
-              print('Patched BackpackMod.java')
+                      # 1. تغيير ClickType القديم إلى الاسم الجديد الرسمي ContainerInput
+                      code = code.replace('import net.minecraft.world.inventory.ClickType;', 'import net.minecraft.world.inventory.ContainerInput;')
+                      code = code.replace('ClickType', 'ContainerInput')
 
-          # تعطيل أيقونة الخلفية مؤقتاً لتفادي خطأ setBackground
-          slot_file = 'src/main/java/com/backpackmod/BackpackSlot.java'
-          if os.path.exists(slot_file):
-              with open(slot_file, 'r') as f:
-                  txt = f.read()
-              txt = re.sub(r'(setBackground\([^)]+\);)', r'// \1', txt)
-              with open(slot_file, 'w') as f:
-                  f.write(txt)
-              print('Patched BackpackSlot.java')
+                      # 2. تصحيح GameRules لقواعد اللعبة في 26.2
+                      code = code.replace('getGameRules().get(GameRules.KEEP_INVENTORY)', 'getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)')
+                      code = code.replace('GameRules.KEEP_INVENTORY', 'GameRules.RULE_KEEPINVENTORY')
+
+                      # 3. تصحيح واجهة الشنطة BackpackScreen
+                      code = code.replace('protected void extractBackground', 'public void extractBackground')
+                      code = re.sub(r'(this\.imageWidth\s*=\s*[^;]+;)', r'// \1', code)
+                      code = re.sub(r'(this\.imageHeight\s*=\s*[^;]+;)', r'// \1', code)
+
+                      # 4. تصحيح تاقات كرات الـ XP
+                      code = code.replace('orb.getTags()', 'orb.getScoreboardTags()')
+
+                      # 5. تصحيح مسجّل وصفة الترقية
+                      code = code.replace('new CustomRecipe.Serializer<>(UpgradeRecipe::new)', 'new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(UpgradeRecipe::new)')
+
+                      # 6. تعطيل دالة الأيقونة مؤقتاً لتفادي خطأ الميثود
+                      code = re.sub(r'(setBackground\([^)]+\);)', r'// \1', code)
+
+                      if code != orig:
+                          with open(p, 'w', encoding='utf-8') as file:
+                              file.write(code)
+                          print(f'تم تعديل: {f}')
           "
 
-          echo "=== 3. تشغيل البيلد ==="
+          echo "=== 2. تشغيل البيلد ==="
           gradle build --stacktrace
 
       - name: Upload Mod Jar
