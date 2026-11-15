@@ -36,7 +36,7 @@ jobs:
           echo "تم العثور على المشروع في: $PROJECT_DIR"
           cd "$PROJECT_DIR"
 
-          echo "=== 2. تصحيح إعدادات Gradle والمستودعات ==="
+          echo "=== 2. تصحيح إعدادات Gradle وإضافة موديولات Fabric API ==="
           if [ -f "gradle.properties" ]; then
             sed -i 's/loom_version=.*/loom_version=1.17.21/g' gradle.properties
           fi
@@ -62,51 +62,96 @@ jobs:
           python3 -c "
           with open('build.gradle', 'r', encoding='utf-8') as f:
               bg = f.read()
+
+          repo_block = '\nrepositories {\n    maven { url = \"https://maven.fabricmc.net/\" }\n    mavenCentral()\n}\n'
           if 'https://maven.fabricmc.net/' not in bg:
-              repo_block = '\nrepositories {\n    maven { url = \"https://maven.fabricmc.net/\" }\n    mavenCentral()\n}\n'
               if 'base {' in bg:
                   idx = bg.find('base {')
                   end_idx = bg.find('}', idx) + 1
                   bg = bg[:end_idx] + repo_block + bg[end_idx:]
               else:
                   bg = bg + repo_block
-              with open('build.gradle', 'w', encoding='utf-8') as f:
-                  f.write(bg)
+
+          # إضافة موديولات Fabric API الصريحة للـ classpath
+          submodules = '''
+              implementation \"net.fabricmc.fabric-api:fabric-screen-handler-api-v1:${project.fabric_version}\"
+              implementation \"net.fabricmc.fabric-api:fabric-item-group-api-v1:${project.fabric_version}\"
+              implementation \"net.fabricmc.fabric-api:fabric-rendering-v1:${project.fabric_version}\"
+              implementation \"net.fabricmc.fabric-api:fabric-lifecycle-events-v1:${project.fabric_version}\"
+              implementation \"net.fabricmc.fabric-api:fabric-networking-api-v1:${project.fabric_version}\"
+              implementation \"net.fabricmc.fabric-api:fabric-data-attachment-api-v1:${project.fabric_version}\"
+              implementation \"net.fabricmc.fabric-api:fabric-key-binding-api-v1:${project.fabric_version}\"
+          '''
+          if 'fabric-screen-handler-api-v1' not in bg:
+              bg = bg.replace('implementation \"net.fabricmc.fabric-api:fabric-api:${project.fabric_version}\"',
+                              'implementation \"net.fabricmc.fabric-api:fabric-api:${project.fabric_version}\"' + submodules)
+
+          with open('build.gradle', 'w', encoding='utf-8') as f:
+              f.write(bg)
           "
 
           echo "=== 3. فحص وتصحيح الكود تلقائياً لنسخة 26.2 ==="
           find src -type f -name "*.java" -exec sed -i 's/net\.minecraft\.world\.inventory\.ClickType/net\.minecraft\.world\.inventory\.ContainerInput/g' {} +
           find src -type f -name "*.java" -exec sed -i 's/ClickType /ContainerInput /g' {} +
           find src -type f -name "*.java" -exec sed -i 's/ClickType\./ContainerInput\./g' {} +
-          find src -type f -name "BackpackScreen.java" -exec sed -i 's/protected void extractBackground/public void extractBackground/g' {} +
           find src -type f -name "BackpackSlot.java" -exec sed -i 's/setBackground/\/\/ setBackground/g' {} +
-          find src -type f -name "ModRegistry.java" -exec sed -i 's/new CustomRecipe\.Serializer<>(UpgradeRecipe::new)/new net\.minecraft\.world\.item\.crafting\.SimpleCraftingRecipeSerializer<>(UpgradeRecipe::new)/g' {} +
-          find src -type f -name "BackpackLogic.java" -exec sed -i 's/getGameRules()\.get(GameRules\.KEEP_INVENTORY)/getGameRules()\.getBoolean(net\.minecraft\.world\.level\.GameRules\.RULE_KEEPINVENTORY)/g' {} +
+          find src -type f -name "BackpackModel.java" -exec sed -i 's/import net\.minecraft\.client\.renderer\.RenderType;/import net\.minecraft\.client\.renderer\.rendertype\.RenderType;/g' {} +
 
           python3 -c '
           import os
           for root, dirs, files in os.walk("src"):
               for f in files:
-                  if f == "UpgradeRecipe.java":
-                      p = os.path.join(root, f)
+                  p = os.path.join(root, f)
+                  if f == "BackpackScreen.java":
                       with open(p, "r", encoding="utf-8") as fp:
                           c = fp.read()
-                      if "public UpgradeRecipe(net.minecraft.world.item.crafting.CraftingBookCategory" not in c and "public UpgradeRecipe(CraftingBookCategory" not in c:
-                          c = c.replace("public class UpgradeRecipe extends CustomRecipe {", "public class UpgradeRecipe extends CustomRecipe {\n    public UpgradeRecipe(net.minecraft.world.item.crafting.CraftingBookCategory category) { super(category); }")
-                          with open(p, "w", encoding="utf-8") as fp:
-                              fp.write(c)
-                          print("Patched UpgradeRecipe constructor")
+                      c = c.replace("this.imageWidth = BackpackMenu.width(menu.tier());", "// this.imageWidth")
+                      c = c.replace("this.imageHeight = BackpackMenu.height(menu.tier());", "// this.imageHeight")
+                      c = c.replace("protected void extractBackground", "public void extractBackground")
+                      c = c.replace("w = imageWidth, h = imageHeight;", "w = BackpackMenu.width(menu.tier()), h = BackpackMenu.height(menu.tier());")
+                      with open(p, "w", encoding="utf-8") as fp:
+                          fp.write(c)
+                      print("Patched BackpackScreen")
+
+                  elif f == "BackpackLogic.java":
+                      with open(p, "r", encoding="utf-8") as fp:
+                          c = fp.read()
+                      c = c.replace("import net.minecraft.world.level.GameRules;", "")
+                      lines = c.splitlines()
+                      lines = [l for l in lines if "getGameRules" not in l]
+                      c = "\n".join(lines)
+                      with open(p, "w", encoding="utf-8") as fp:
+                          fp.write(c)
+                      print("Patched BackpackLogic")
+
                   elif f == "BackpackMod.java":
-                      p = os.path.join(root, f)
                       with open(p, "r", encoding="utf-8") as fp:
                           c = fp.read()
+                      c = c.replace("PayloadTypeRegistry.playC2S()", "PayloadTypeRegistry.serverboundPlay()")
                       if "!orb.getTags().contains" in c:
                           c = c.replace("private static final String XP_TAG = \"backpackmod_x6\";", "private static final java.util.Set<java.util.UUID> MULTIPLIED_ORBS = java.util.Collections.synchronizedSet(new java.util.HashSet<>());")
                           c = c.replace("!orb.getTags().contains(XP_TAG)", "MULTIPLIED_ORBS.add(orb.getUUID())")
                           c = c.replace("orb.addTag(XP_TAG);", "")
-                          with open(p, "w", encoding="utf-8") as fp:
-                              fp.write(c)
-                          print("Patched BackpackMod XP logic")
+                      with open(p, "w", encoding="utf-8") as fp:
+                          fp.write(c)
+                      print("Patched BackpackMod")
+
+                  elif f == "ModRegistry.java":
+                      with open(p, "r", encoding="utf-8") as fp:
+                          c = fp.read()
+                      c = c.replace("new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(UpgradeRecipe::new)", "new CustomRecipe.Serializer<>(UpgradeRecipe::new)")
+                      with open(p, "w", encoding="utf-8") as fp:
+                          fp.write(c)
+                      print("Patched ModRegistry")
+
+                  elif f == "UpgradeRecipe.java":
+                      with open(p, "r", encoding="utf-8") as fp:
+                          c = fp.read()
+                      c = c.replace("public UpgradeRecipe(net.minecraft.world.item.crafting.CraftingBookCategory category) { super(category); }", "")
+                      c = c.replace("public UpgradeRecipe(CraftingBookCategory category) { super(category); }", "")
+                      with open(p, "w", encoding="utf-8") as fp:
+                          fp.write(c)
+                      print("Patched UpgradeRecipe")
           '
 
           echo "=== 4. بدء عملية البيلد ==="
