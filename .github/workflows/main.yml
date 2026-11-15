@@ -36,125 +36,14 @@ jobs:
           echo "تم العثور على المشروع في: $PROJECT_DIR"
           cd "$PROJECT_DIR"
 
-          echo "=== 2. تصحيح إعدادات Gradle وإضافة موديولات Fabric API ==="
+          echo "=== 2. تصحيح إعدادات Gradle والمستودعات والكود ==="
           if [ -f "gradle.properties" ]; then
             sed -i 's/loom_version=.*/loom_version=1.17.21/g' gradle.properties
           fi
 
-          python3 -c "
-          with open('settings.gradle', 'w', encoding='utf-8') as f:
-              f.write('''pluginManagement {
-              repositories {
-                  maven { url = \"https://maven.fabricmc.net/\" }
-                  mavenCentral()
-                  gradlePluginPortal()
-              }
-          }
-          dependencyResolutionManagement {
-              repositories {
-                  maven { url = \"https://maven.fabricmc.net/\" }
-                  mavenCentral()
-              }
-          }
-          ''')
-          "
+          echo "aW1wb3J0IG9zCgppZiBvcy5wYXRoLmV4aXN0cygic2V0dGluZ3MuZ3JhZGxlIik6CiAgICB3aXRoIG9wZW4oInNldHRpbmdzLmdyYWRsZSIsICJ3IiwgZW5jb2Rpbmc9InV0Zi04IikgYXMgZjoKICAgICAgICBmLndyaXRlKCIiInBsdWdpbk1hbmFnZW1lbnQgewogICAgcmVwb3NpdG9yaWVzIHsKICAgICAgICBtYXZlbiB7IHVybCA9ICJodHRwczovL21hdmVuLmZhYnJpY21jLm5ldC8iIH0KICAgICAgICBtYXZlbkNlbnRyYWwoKQogICAgICAgIGdyYWRsZVBsdWdpblBvcnRhbCgpCiAgICB9Cn0KZGVwZW5kZW5jeVJlc29sdXRpb25NYW5hZ2VtZW50IHsKICAgIHJlcG9zaXRvcmllcyB7CiAgICAgICAgbWF2ZW4geyB1cmwgPSAiaHR0cHM6Ly9tYXZlbi5mYWJyaWNtYy5uZXQvIiB9CiAgICAgICAgbWF2ZW5DZW50cmFsKCkKICAgIH0KfQoiIiIpCgppZiBvcy5wYXRoLmV4aXN0cygiYnVpbGQuZ3JhZGxlIik6CiAgICB3aXRoIG9wZW4oImJ1aWxkLmdyYWRsZSIsICJyIiwgZW5jb2Rpbmc9InV0Zi04IikgYXMgZjoKICAgICAgICBiZyA9IGYucmVhZCgpCgogICAgcmVwb19ibG9jayA9ICdcbnJlcG9zaXRvcmllcyB7XG4gICAgbWF2ZW4geyB1cmwgPSAiaHR0cHM6Ly9tYXZlbi5mYWJyaWNtYy5uZXQvIiB9XG4gICAgbWF2ZW5DZW50cmFsKClcbn1cbicKICAgIGlmICJodHRwczovL21hdmVuLmZhYnJpY21jLm5ldC8iIG5vdCBpbiBiZzoKICAgICAgICBpZiAiYmFzZSB7IiBpbiBiZzoKICAgICAgICAgICAgaWR4ID0gYmcuZmluZCgiYmFzZSB7IikKICAgICAgICAgICAgZW5kX2lkeCA9IGJnLmZpbmQoIn0iLCBpZHgpICsgMQogICAgICAgICAgICBiZyA9IGJnWzplbmRfaWR4XSArIHJlcG9fYmxvY2sgKyBiZ1tlbmRfaWR4Ol0KICAgICAgICBlbHNlOgogICAgICAgICAgICBiZyA9IGJnICsgcmVwb19ibG9jawoKICAgIHN1YiA9ICdcbiAgICBpbXBsZW1lbnRhdGlvbiAibmV0LmZhYnJpY21jLmZhYnJpYy1hcGk6ZmFicmljLXNjcmVlbi1oYW5kbGVyLWFwaS12MToke3Byb2plY3QuZmFicmljX3ZlcnNpb259IicgKyBcCiAgICAgICAgICAnXG4gICAgaW1wbGVtZW50YXRpb24gIm5ldC5mYWJyaWNtYy5mYWJyaWMtYXBpOmZhYnJpYy1pdGVtLWdyb3VwLWFwaS12MToke3Byb2plY3QuZmFicmljX3ZlcnNpb259IicgKyBcCiAgICAgICAgICAnXG4gICAgaW1wbGVtZW50YXRpb24gIm5ldC5mYWJyaWNtYy5mYWJyaWMtYXBpOmZhYnJpYy1yZW5kZXJpbmctdjE6JHtwcm9qZWN0LmZhYnJpY192ZXJzaW9ufSInICsgXAogICAgICAgICAgJ1xuICAgIGltcGxlbWVudGF0aW9uICJuZXQuZmFicmljbWMuZmFicmljLWFwaTpmYWJyaWMtbGlmZWN5Y2xlLWV2ZW50cy12MToke3Byb2plY3QuZmFicmljX3ZlcnNpb259IicgKyBcCiAgICAgICAgICAnXG4gICAgaW1wbGVtZW50YXRpb24gIm5ldC5mYWJyaWNtYy5mYWJyaWMtYXBpOmZhYnJpYy1uZXR3b3JraW5nLWFwaS12MToke3Byb2plY3QuZmFicmljX3ZlcnNpb259IicgKyBcCiAgICAgICAgICAnXG4gICAgaW1wbGVtZW50YXRpb24gIm5ldC5mYWJyaWNtYy5mYWJyaWMtYXBpOmZhYnJpYy1kYXRhLWF0dGFjaG1lbnQtYXBpLXYxOiR7cHJvamVjdC5mYWJyaWNfdmVyc2lvbn0iJyArIFwKICAgICAgICAgICdcbiAgICBpbXBsZW1lbnRhdGlvbiAibmV0LmZhYnJpY21jLmZhYnJpYy1hcGk6ZmFicmljLWtleS1iaW5kaW5nLWFwaS12MToke3Byb2plY3QuZmFicmljX3ZlcnNpb259IlxuJwoKICAgIGlmICJmYWJyaWMtc2NyZWVuLWhhbmRsZXItYXBpLXYxIiBub3QgaW4gYmc6CiAgICAgICAgdGFyZ2V0ID0gJ2ltcGxlbWVudGF0aW9uICJuZXQuZmFicmljbWMuZmFicmljLWFwaTpmYWJyaWMtYXBpOiR7cHJvamVjdC5mYWJyaWNfdmVyc2lvbn0iJwogICAgICAgIGlmIHRhcmdldCBpbiBiZzoKICAgICAgICAgICAgYmcgPSBiZy5yZXBsYWNlKHRhcmdldCwgdGFyZ2V0ICsgc3ViKQoKICAgIHdpdGggb3BlbigiYnVpbGQuZ3JhZGxlIiwgInciLCBlbmNvZGluZz0idXRmLTgiKSBhcyBmOgogICAgICAgIGYud3JpdGUoYmcpCgpmb3Igcm9vdCwgZGlycywgZmlsZXMgaW4gb3Mud2Fsaygic3JjIik6CiAgICBmb3IgZiBpbiBmaWxlczoKICAgICAgICBpZiBmLmVuZHN3aXRoKCIuamF2YSIpOgogICAgICAgICAgICBwID0gb3MucGF0aC5qb2luKHJvb3QsIGYpCiAgICAgICAgICAgIHdpdGggb3BlbihwLCAiciIsIGVuY29kaW5nPSJ1dGYtOCIpIGFzIGZwOgogICAgICAgICAgICAgICAgYyA9IGZwLnJlYWQoKQogICAgICAgICAgICBjID0gYy5yZXBsYWNlKCJuZXQubWluZWNyYWZ0LndvcmxkLmludmVudG9yeS5DbGlja1R5cGUiLCAibmV0Lm1pbmVjcmFmdC53b3JsZC5pbnZlbnRvcnkuQ29udGFpbmVySW5wdXQiKQogICAgICAgICAgICBjID0gYy5yZXBsYWNlKCJDbGlja1R5cGUgIiwgIkNvbnRhaW5lcklucHV0ICIpCiAgICAgICAgICAgIGMgPSBjLnJlcGxhY2UoIkNsaWNrVHlwZS4iLCAiQ29udGFpbmVySW5wdXQuIikKICAgICAgICAgICAgYyA9IGMucmVwbGFjZSgic2V0QmFja2dyb3VuZChCYWNrcGFja01vZC5pZCgiLCAiLy8gc2V0QmFja2dyb3VuZChCYWNrcGFja01vZC5pZCgiKQogICAgICAgICAgICBjID0gYy5yZXBsYWNlKCJpbXBvcnQgbmV0Lm1pbmVjcmFmdC5jbGllbnQucmVuZGVyZXIuUmVuZGVyVHlwZTsiLCAiaW1wb3J0IG5ldC5taW5lY3JhZnQuY2xpZW50LnJlbmRlcmVyLnJlbmRlcnR5cGUuUmVuZGVyVHlwZTsiKQogICAgICAgICAgICAKICAgICAgICAgICAgaWYgZiA9PSAiQmFja3BhY2tTY3JlZW4uamF2YSI6CiAgICAgICAgICAgICAgICBjID0gYy5yZXBsYWNlKCJ0aGlzLmltYWdlV2lkdGggPSBCYWNrcGFja01lbnUud2lkdGgobWVudS50aWVyKCkpOyIsICIvLyB0aGlzLmltYWdlV2lkdGgiKQogICAgICAgICAgICAgICAgYyA9IGMucmVwbGFjZSgidGhpcy5pbWFnZUhlaWdodCA9IEJhY2twYWNrTWVudS5oZWlnaHQobWVudS50aWVyKCkpOyIsICIvLyB0aGlzLmltYWdlSGVpZ2h0IikKICAgICAgICAgICAgICAgIGMgPSBjLnJlcGxhY2UoInByb3RlY3RlZCB2b2lkIGV4dHJhY3RCYWNrZ3JvdW5kIiwgInB1YmxpYyB2b2lkIGV4dHJhY3RCYWNrZ3JvdW5kIikKICAgICAgICAgICAgICAgIGMgPSBjLnJlcGxhY2UoIncgPSBpbWFnZVdpZHRoLCBoID0gaW1hZ2VIZWlnaHQ7IiwgIncgPSBCYWNrcGFja01lbnUud2lkdGgobWVudS50aWVyKCkpLCBoID0gQmFja3BhY2tNZW51LmhlaWdodChtZW51LnRpZXIoKSk7IikKICAgICAgICAgICAgCiAgICAgICAgICAgIGVsaWYgZiA9PSAiQmFja3BhY2tMb2dpYy5qYXZhIjoKICAgICAgICAgICAgICAgIGMgPSBjLnJlcGxhY2UoImltcG9ydCBuZXQubWluZWNyYWZ0LndvcmxkLmxldmVsLkdhbWVSdWxlczsiLCAiIikKICAgICAgICAgICAgICAgIGxpbmVzID0gYy5zcGxpdGxpbmVzKCkKICAgICAgICAgICAgICAgIGxpbmVzID0gW2wgZm9yIGwgaW4gbGluZXMgaWYgImdldEdhbWVSdWxlcyIgbm90IGluIGxdCiAgICAgICAgICAgICAgICBjID0gIlxuIi5qb2luKGxpbmVzKQogICAgICAgICAgICAKICAgICAgICAgICAgZWxpZiBmID09ICJCYWNrcGFja01vZC5qYXZhIjoKICAgICAgICAgICAgICAgIGMgPSBjLnJlcGxhY2UoIlBheWxvYWRUeXBlUmVnaXN0cnkucGxheUMyUygpIiwgIlBheWxvYWRUeXBlUmVnaXN0cnkuc2VydmVyYm91bmRQbGF5KCkiKQogICAgICAgICAgICAgICAgaWYgIiFvcmIuZ2V0VGFncygpLmNvbnRhaW5zIiBpbiBjOgogICAgICAgICAgICAgICAgICAgIGMgPSBjLnJlcGxhY2UoJ3ByaXZhdGUgc3RhdGljIGZpbmFsIFN0cmluZyBYUF9UQUcgPSAiYmFja3BhY2ttb2RfeDYiOycsICdwcml2YXRlIHN0YXRpYyBmaW5hbCBqYXZhLnV0aWwuU2V0PGphdmEudXRpbC5VVUlEPiBNVUxUSVBMSUVEX09SQlMgPSBqYXZhLnV0aWwuQ29sbGVjdGlvbnMuc3luY2hyb25pemVkU2V0KG5ldyBqYXZhLnV0aWwuSGFzaFNldDw+KCkpOycpCiAgICAgICAgICAgICAgICAgICAgYyA9IGMucmVwbGFjZSgiIW9yYi5nZXRUYWdzKCkuY29udGFpbnMoWFBfVEFHKSIsICJNVUxUSVBMSUVEX09SQlMuYWRkKG9yYi5nZXRVVUlEKCkpIikKICAgICAgICAgICAgICAgICAgICBjID0gYy5yZXBsYWNlKCJvcmIuYWRkVGFnKFhQX1RBRyk7IiwgIiIpCiAgICAgICAgICAgIAogICAgICAgICAgICBlbGlmIGYgPT0gIk1vZFJlZ2lzdHJ5LmphdmEiOgogICAgICAgICAgICAgICAgYyA9IGMucmVwbGFjZSgibmV3IG5ldC5taW5lY3JhZnQud29ybGQuaXRlbS5jcmFmdGluZy5TaW1wbGVDcmFmdGluZ1JlY2lwZVNlcmlhbGl6ZXI8PihVcGdyYWRlUmVjaXBlOjpuZXcpIiwgIm5ldyBDdXN0b21SZWNpcGUuU2VyaWFsaXplcjw+KFVwZ3JhZGVSZWNpcGU6Om5ldykiKQogICAgICAgICAgICAKICAgICAgICAgICAgZWxpZiBmID09ICJVcGdyYWRlUmVjaXBlLmphdmEiOgogICAgICAgICAgICAgICAgYyA9IGMucmVwbGFjZSgicHVibGljIFVwZ3JhZGVSZWNpcGUobmV0Lm1pbmVjcmFmdC53b3JsZC5pdGVtLmNyYWZ0aW5nLkNyYWZ0aW5nQm9va0NhdGVnb3J5IGNhdGVnb3J5KSB7IHN1cGVyKGNhdGVnb3J5KTsgfSIsICIiKQogICAgICAgICAgICAgICAgYyA9IGMucmVwbGFjZSgicHVibGljIFVwZ3JhZGVSZWNpcGUoQ3JhZnRpbmdCb29rQ2F0ZWdvcnkgY2F0ZWdvcnkpIHsgc3VwZXIoY2F0ZWdvcnkpOyB9IiwgIiIpCgogICAgICAgICAgICB3aXRoIG9wZW4ocCwgInciLCBlbmNvZGluZz0idXRmLTgiKSBhcyBmcDoKICAgICAgICAgICAgICAgIGZwLndyaXRlKGMpCgpwcmludCgiUGF0Y2ggYXBwbGllZCBzdWNjZXNzZnVsbHkhIik=" | base64 -d | python3
 
-          python3 -c "
-          with open('build.gradle', 'r', encoding='utf-8') as f:
-              bg = f.read()
-
-          repo_block = '\nrepositories {\n    maven { url = \"https://maven.fabricmc.net/\" }\n    mavenCentral()\n}\n'
-          if 'https://maven.fabricmc.net/' not in bg:
-              if 'base {' in bg:
-                  idx = bg.find('base {')
-                  end_idx = bg.find('}', idx) + 1
-                  bg = bg[:end_idx] + repo_block + bg[end_idx:]
-              else:
-                  bg = bg + repo_block
-
-          # إضافة موديولات Fabric API الصريحة للـ classpath
-          submodules = '''
-              implementation \"net.fabricmc.fabric-api:fabric-screen-handler-api-v1:${project.fabric_version}\"
-              implementation \"net.fabricmc.fabric-api:fabric-item-group-api-v1:${project.fabric_version}\"
-              implementation \"net.fabricmc.fabric-api:fabric-rendering-v1:${project.fabric_version}\"
-              implementation \"net.fabricmc.fabric-api:fabric-lifecycle-events-v1:${project.fabric_version}\"
-              implementation \"net.fabricmc.fabric-api:fabric-networking-api-v1:${project.fabric_version}\"
-              implementation \"net.fabricmc.fabric-api:fabric-data-attachment-api-v1:${project.fabric_version}\"
-              implementation \"net.fabricmc.fabric-api:fabric-key-binding-api-v1:${project.fabric_version}\"
-          '''
-          if 'fabric-screen-handler-api-v1' not in bg:
-              bg = bg.replace('implementation \"net.fabricmc.fabric-api:fabric-api:${project.fabric_version}\"',
-                              'implementation \"net.fabricmc.fabric-api:fabric-api:${project.fabric_version}\"' + submodules)
-
-          with open('build.gradle', 'w', encoding='utf-8') as f:
-              f.write(bg)
-          "
-
-          echo "=== 3. فحص وتصحيح الكود تلقائياً لنسخة 26.2 ==="
-          find src -type f -name "*.java" -exec sed -i 's/net\.minecraft\.world\.inventory\.ClickType/net\.minecraft\.world\.inventory\.ContainerInput/g' {} +
-          find src -type f -name "*.java" -exec sed -i 's/ClickType /ContainerInput /g' {} +
-          find src -type f -name "*.java" -exec sed -i 's/ClickType\./ContainerInput\./g' {} +
-          find src -type f -name "BackpackSlot.java" -exec sed -i 's/setBackground/\/\/ setBackground/g' {} +
-          find src -type f -name "BackpackModel.java" -exec sed -i 's/import net\.minecraft\.client\.renderer\.RenderType;/import net\.minecraft\.client\.renderer\.rendertype\.RenderType;/g' {} +
-
-          python3 -c '
-          import os
-          for root, dirs, files in os.walk("src"):
-              for f in files:
-                  p = os.path.join(root, f)
-                  if f == "BackpackScreen.java":
-                      with open(p, "r", encoding="utf-8") as fp:
-                          c = fp.read()
-                      c = c.replace("this.imageWidth = BackpackMenu.width(menu.tier());", "// this.imageWidth")
-                      c = c.replace("this.imageHeight = BackpackMenu.height(menu.tier());", "// this.imageHeight")
-                      c = c.replace("protected void extractBackground", "public void extractBackground")
-                      c = c.replace("w = imageWidth, h = imageHeight;", "w = BackpackMenu.width(menu.tier()), h = BackpackMenu.height(menu.tier());")
-                      with open(p, "w", encoding="utf-8") as fp:
-                          fp.write(c)
-                      print("Patched BackpackScreen")
-
-                  elif f == "BackpackLogic.java":
-                      with open(p, "r", encoding="utf-8") as fp:
-                          c = fp.read()
-                      c = c.replace("import net.minecraft.world.level.GameRules;", "")
-                      lines = c.splitlines()
-                      lines = [l for l in lines if "getGameRules" not in l]
-                      c = "\n".join(lines)
-                      with open(p, "w", encoding="utf-8") as fp:
-                          fp.write(c)
-                      print("Patched BackpackLogic")
-
-                  elif f == "BackpackMod.java":
-                      with open(p, "r", encoding="utf-8") as fp:
-                          c = fp.read()
-                      c = c.replace("PayloadTypeRegistry.playC2S()", "PayloadTypeRegistry.serverboundPlay()")
-                      if "!orb.getTags().contains" in c:
-                          c = c.replace("private static final String XP_TAG = \"backpackmod_x6\";", "private static final java.util.Set<java.util.UUID> MULTIPLIED_ORBS = java.util.Collections.synchronizedSet(new java.util.HashSet<>());")
-                          c = c.replace("!orb.getTags().contains(XP_TAG)", "MULTIPLIED_ORBS.add(orb.getUUID())")
-                          c = c.replace("orb.addTag(XP_TAG);", "")
-                      with open(p, "w", encoding="utf-8") as fp:
-                          fp.write(c)
-                      print("Patched BackpackMod")
-
-                  elif f == "ModRegistry.java":
-                      with open(p, "r", encoding="utf-8") as fp:
-                          c = fp.read()
-                      c = c.replace("new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(UpgradeRecipe::new)", "new CustomRecipe.Serializer<>(UpgradeRecipe::new)")
-                      with open(p, "w", encoding="utf-8") as fp:
-                          fp.write(c)
-                      print("Patched ModRegistry")
-
-                  elif f == "UpgradeRecipe.java":
-                      with open(p, "r", encoding="utf-8") as fp:
-                          c = fp.read()
-                      c = c.replace("public UpgradeRecipe(net.minecraft.world.item.crafting.CraftingBookCategory category) { super(category); }", "")
-                      c = c.replace("public UpgradeRecipe(CraftingBookCategory category) { super(category); }", "")
-                      with open(p, "w", encoding="utf-8") as fp:
-                          fp.write(c)
-                      print("Patched UpgradeRecipe")
-          '
-
-          echo "=== 4. بدء عملية البيلد ==="
+          echo "=== 3. تشغيل البيلد ==="
           gradle build --stacktrace
 
       - name: Upload Mod Jar
