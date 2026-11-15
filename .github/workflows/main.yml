@@ -1,4 +1,4 @@
-name: Build Fabric Mod 26.2
+name: Build Minecraft 26.2 Mod
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up JDK 25
+      - name: Set up Java 25
         uses: actions/setup-java@v4
         with:
           distribution: 'oracle'
@@ -23,55 +23,97 @@ jobs:
         with:
           gradle-version: '9.5.1'
 
-      - name: Auto-Fix 26.2 Code and Build
+      - name: Prepare and Build Mod
         run: |
-          echo "=== 1. تصحيح مسميات كود الجافا لنسخة 26.2 ==="
+          set -e
+          echo "=== 1. البحث عن مسار المشروع ==="
+          BUILD_FILE=$(find . -name "build.gradle" | head -n 1)
+          if [ -z "$BUILD_FILE" ]; then
+            echo "لم يتم العثور على ملف build.gradle!"
+            exit 1
+          fi
+          PROJECT_DIR=$(dirname "$BUILD_FILE")
+          echo "تم العثور على المشروع في: $PROJECT_DIR"
+          cd "$PROJECT_DIR"
+
+          echo "=== 2. تصحيح إعدادات Gradle والمستودعات ==="
+          if [ -f "gradle.properties" ]; then
+            sed -i 's/loom_version=.*/loom_version=1.17.21/g' gradle.properties
+          fi
+
           python3 -c "
-          import os, re
-
-          for root, _, files in os.walk('src'):
-              for f in files:
-                  if f.endswith('.java'):
-                      p = os.path.join(root, f)
-                      with open(p, 'r', encoding='utf-8') as file:
-                          code = file.read()
-                      orig = code
-
-                      # 1. تغيير ClickType القديم إلى الاسم الجديد الرسمي ContainerInput
-                      code = code.replace('import net.minecraft.world.inventory.ClickType;', 'import net.minecraft.world.inventory.ContainerInput;')
-                      code = code.replace('ClickType', 'ContainerInput')
-
-                      # 2. تصحيح GameRules لقواعد اللعبة في 26.2
-                      code = code.replace('getGameRules().get(GameRules.KEEP_INVENTORY)', 'getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)')
-                      code = code.replace('GameRules.KEEP_INVENTORY', 'GameRules.RULE_KEEPINVENTORY')
-
-                      # 3. تصحيح واجهة الشنطة BackpackScreen
-                      code = code.replace('protected void extractBackground', 'public void extractBackground')
-                      code = re.sub(r'(this\.imageWidth\s*=\s*[^;]+;)', r'// \1', code)
-                      code = re.sub(r'(this\.imageHeight\s*=\s*[^;]+;)', r'// \1', code)
-
-                      # 4. تصحيح تاقات كرات الـ XP
-                      code = code.replace('orb.getTags()', 'orb.getScoreboardTags()')
-
-                      # 5. تصحيح مسجّل وصفة الترقية
-                      code = code.replace('new CustomRecipe.Serializer<>(UpgradeRecipe::new)', 'new net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer<>(UpgradeRecipe::new)')
-
-                      # 6. تعطيل دالة الأيقونة مؤقتاً لتفادي خطأ الميثود
-                      code = re.sub(r'(setBackground\([^)]+\);)', r'// \1', code)
-
-                      if code != orig:
-                          with open(p, 'w', encoding='utf-8') as file:
-                              file.write(code)
-                          print(f'تم تعديل: {f}')
+          with open('settings.gradle', 'w', encoding='utf-8') as f:
+              f.write('''pluginManagement {
+              repositories {
+                  maven { url = \"https://maven.fabricmc.net/\" }
+                  mavenCentral()
+                  gradlePluginPortal()
+              }
+          }
+          dependencyResolutionManagement {
+              repositories {
+                  maven { url = \"https://maven.fabricmc.net/\" }
+                  mavenCentral()
+              }
+          }
+          ''')
           "
 
-          echo "=== 2. تشغيل البيلد ==="
+          python3 -c "
+          with open('build.gradle', 'r', encoding='utf-8') as f:
+              bg = f.read()
+          if 'https://maven.fabricmc.net/' not in bg:
+              repo_block = '\nrepositories {\n    maven { url = \"https://maven.fabricmc.net/\" }\n    mavenCentral()\n}\n'
+              if 'base {' in bg:
+                  idx = bg.find('base {')
+                  end_idx = bg.find('}', idx) + 1
+                  bg = bg[:end_idx] + repo_block + bg[end_idx:]
+              else:
+                  bg = bg + repo_block
+              with open('build.gradle', 'w', encoding='utf-8') as f:
+                  f.write(bg)
+          "
+
+          echo "=== 3. فحص وتصحيح الكود تلقائياً لنسخة 26.2 ==="
+          find src -type f -name "*.java" -exec sed -i 's/net\.minecraft\.world\.inventory\.ClickType/net\.minecraft\.world\.inventory\.ContainerInput/g' {} +
+          find src -type f -name "*.java" -exec sed -i 's/ClickType /ContainerInput /g' {} +
+          find src -type f -name "*.java" -exec sed -i 's/ClickType\./ContainerInput\./g' {} +
+          find src -type f -name "BackpackScreen.java" -exec sed -i 's/protected void extractBackground/public void extractBackground/g' {} +
+          find src -type f -name "BackpackSlot.java" -exec sed -i 's/setBackground/\/\/ setBackground/g' {} +
+          find src -type f -name "ModRegistry.java" -exec sed -i 's/new CustomRecipe\.Serializer<>(UpgradeRecipe::new)/new net\.minecraft\.world\.item\.crafting\.SimpleCraftingRecipeSerializer<>(UpgradeRecipe::new)/g' {} +
+          find src -type f -name "BackpackLogic.java" -exec sed -i 's/getGameRules()\.get(GameRules\.KEEP_INVENTORY)/getGameRules()\.getBoolean(net\.minecraft\.world\.level\.GameRules\.RULE_KEEPINVENTORY)/g' {} +
+
+          python3 -c '
+          import os
+          for root, dirs, files in os.walk("src"):
+              for f in files:
+                  if f == "UpgradeRecipe.java":
+                      p = os.path.join(root, f)
+                      with open(p, "r", encoding="utf-8") as fp:
+                          c = fp.read()
+                      if "public UpgradeRecipe(net.minecraft.world.item.crafting.CraftingBookCategory" not in c and "public UpgradeRecipe(CraftingBookCategory" not in c:
+                          c = c.replace("public class UpgradeRecipe extends CustomRecipe {", "public class UpgradeRecipe extends CustomRecipe {\n    public UpgradeRecipe(net.minecraft.world.item.crafting.CraftingBookCategory category) { super(category); }")
+                          with open(p, "w", encoding="utf-8") as fp:
+                              fp.write(c)
+                          print("Patched UpgradeRecipe constructor")
+                  elif f == "BackpackMod.java":
+                      p = os.path.join(root, f)
+                      with open(p, "r", encoding="utf-8") as fp:
+                          c = fp.read()
+                      if "!orb.getTags().contains" in c:
+                          c = c.replace("private static final String XP_TAG = \"backpackmod_x6\";", "private static final java.util.Set<java.util.UUID> MULTIPLIED_ORBS = java.util.Collections.synchronizedSet(new java.util.HashSet<>());")
+                          c = c.replace("!orb.getTags().contains(XP_TAG)", "MULTIPLIED_ORBS.add(orb.getUUID())")
+                          c = c.replace("orb.addTag(XP_TAG);", "")
+                          with open(p, "w", encoding="utf-8") as fp:
+                              fp.write(c)
+                          print("Patched BackpackMod XP logic")
+          '
+
+          echo "=== 4. بدء عملية البيلد ==="
           gradle build --stacktrace
 
       - name: Upload Mod Jar
         uses: actions/upload-artifact@v4
         with:
           name: BackpackMod-26.2
-          path: |
-            build/libs/*.jar
-            **/build/libs/*.jar
+          path: '**/build/libs/*.jar'
