@@ -8,7 +8,7 @@ public enum BackpackTier {
     IRON("iron", 9, 6, false, Items.IRON_INGOT),
     GOLDEN("golden", 9, 9, false, Items.GOLD_INGOT),
     DIAMOND("diamond", 12, 9, false, Items.DIAMOND),
-    NETHERITE("netherite", 13, 9, true, Items.NETHERITE_INGOT);
+    NETHERITE("netherite", 13, 9, true, Items.NETHER_BRICK);
 
     public final String id;
     public final int cols, rows;

@@ -38,8 +38,16 @@ public class UpgradeRecipe extends CustomRecipe {
             return null;
         }
         BackpackTier next = b.tier().next();
-        if (next != null && others.size() == 8 && others.stream().allMatch(s -> s.is(next.upgradeMaterial)))
-            return pack.transmuteCopy(ModRegistry.BACKPACKS.get(next));
+        if (next != null && others.size() == 8) {
+            boolean match;
+            if (next == BackpackTier.NETHERITE) {
+                match = others.stream().allMatch(s ->
+                        s.is(Items.NETHER_BRICK) || s.is(Items.NETHER_BRICKS) || s.is(Items.NETHERITE_SCRAP) || s.is(Items.NETHERITE_INGOT));
+            } else {
+                match = others.stream().allMatch(s -> s.is(next.upgradeMaterial));
+            }
+            if (match) return pack.transmuteCopy(ModRegistry.BACKPACKS.get(next));
+        }
         return null;
     }
 }
