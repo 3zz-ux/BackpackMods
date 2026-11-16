@@ -8,16 +8,17 @@ import net.minecraft.network.codec.StreamCodec;
 
 /** Custom data component holding the special upgrades installed in a backpack. */
 public record BackpackUpgrades(boolean magnet, boolean autoFeed) {
-    public static final BackpackUpgrades NONE = new BackpackUpgrades(false, false);
+    public static final BackpackUpgrades DEFAULT = new BackpackUpgrades(true, true);
+    public static final BackpackUpgrades NONE = DEFAULT;
     public static final Codec<BackpackUpgrades> CODEC = RecordCodecBuilder.create(i -> i.group(
-            Codec.BOOL.optionalFieldOf("magnet", false).forGetter(BackpackUpgrades::magnet),
-            Codec.BOOL.optionalFieldOf("auto_feed", false).forGetter(BackpackUpgrades::autoFeed)
+            Codec.BOOL.optionalFieldOf("magnet", true).forGetter(BackpackUpgrades::magnet),
+            Codec.BOOL.optionalFieldOf("auto_feed", true).forGetter(BackpackUpgrades::autoFeed)
     ).apply(i, BackpackUpgrades::new));
     public static final StreamCodec<ByteBuf, BackpackUpgrades> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.BOOL, BackpackUpgrades::magnet,
             ByteBufCodecs.BOOL, BackpackUpgrades::autoFeed,
             BackpackUpgrades::new);
 
-    public BackpackUpgrades withMagnet() { return new BackpackUpgrades(true, autoFeed); }
-    public BackpackUpgrades withAutoFeed() { return new BackpackUpgrades(magnet, true); }
+    public BackpackUpgrades withMagnet() { return this; }
+    public BackpackUpgrades withAutoFeed() { return this; }
 }

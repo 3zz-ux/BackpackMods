@@ -60,7 +60,7 @@ public final class ModRegistry {
         for (BackpackTier t : BackpackTier.values()) {
             Item.Properties p = new Item.Properties().stacksTo(1)
                     .component(DataComponents.CONTAINER, ItemContainerContents.EMPTY)
-                    .component(UPGRADES, BackpackUpgrades.NONE);
+                    .component(UPGRADES, BackpackUpgrades.DEFAULT);
             if (t.fireproof) p.fireResistant();
             BACKPACKS.put(t, item(t.id + "_backpack", props -> new BackpackItem(props, t), p));
         }

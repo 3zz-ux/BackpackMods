@@ -46,7 +46,7 @@ public final class BackpackLogic {
     public static void tickMagnet(ServerPlayer p) {
         for (ItemStack pack : all(p)) {
             BackpackItem b = (BackpackItem) pack.getItem();
-            if (!pack.getOrDefault(ModRegistry.UPGRADES, BackpackUpgrades.NONE).magnet() || isOpen(p, pack)) continue;
+            if (isOpen(p, pack)) continue;
             BackpackContainer c = null;
             for (ItemEntity e : p.level().getEntitiesOfClass(ItemEntity.class, p.getBoundingBox().inflate(6),
                     ie -> ie.isAlive() && !ie.hasPickUpDelay() && ie.distanceToSqr(p) <= 36
@@ -69,7 +69,7 @@ public final class BackpackLogic {
         if (level > 14) return;
         for (ItemStack pack : all(p)) {
             BackpackItem b = (BackpackItem) pack.getItem();
-            if (!pack.getOrDefault(ModRegistry.UPGRADES, BackpackUpgrades.NONE).autoFeed() || isOpen(p, pack)) continue;
+            if (isOpen(p, pack)) continue;
             BackpackContainer c = new BackpackContainer(pack, b.tier().slots());
             int bestSlot = -1, bestNutrition = 0;
             for (int i = 0; i < c.getContainerSize(); i++) {
