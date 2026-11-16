@@ -14,23 +14,29 @@ public class BackpackModel extends Model<Unit> {
         MeshDefinition mesh = new MeshDefinition();
         PartDefinition root = mesh.getRoot();
 
-        // Main backpack body with side pockets, top handle, front pouch and buckle
+        // High-detail 3D backpack model designed to sit cleanly over armor without clipping
         root.addOrReplaceChild("bag", CubeListBuilder.create()
-                // Main body
-                .texOffs(0, 0).addBox(-4.5f, 0f, 0f, 9f, 10f, 4.5f)
-                // Front pouch
-                .texOffs(28, 0).addBox(-3.5f, 3.5f, 4.5f, 7f, 5.5f, 1.5f)
-                // Front buckle / clasp
-                .texOffs(0, 20).addBox(-1f, 4.5f, 5.5f, 2f, 2f, 0.5f)
-                // Top lid / cover flap
-                .texOffs(0, 15).addBox(-4.5f, -1.5f, -0.5f, 9f, 2f, 5f)
+                // Main body: width 8, height 9.5, depth 4.5
+                .texOffs(0, 0).addBox(-4.0f, 0.5f, 0.0f, 8.0f, 9.5f, 4.5f)
+                // Top protective lid / flap
+                .texOffs(0, 16).addBox(-4.1f, -0.5f, -0.2f, 8.2f, 2.0f, 4.8f)
                 // Top carry handle
-                .texOffs(28, 8).addBox(-2f, -3f, 1f, 4f, 2f, 1f)
+                .texOffs(0, 24).addBox(-1.5f, -2.0f, 1.5f, 3.0f, 1.5f, 1.0f)
+                // Front 3D pouch
+                .texOffs(28, 0).addBox(-3.0f, 4.0f, 4.5f, 6.0f, 5.5f, 1.5f)
+                // Left vertical strap buckle
+                .texOffs(0, 28).addBox(-2.5f, 2.5f, 4.3f, 1.2f, 2.0f, 0.4f)
+                // Right vertical strap buckle
+                .texOffs(6, 28).addBox(1.3f, 2.5f, 4.3f, 1.2f, 2.0f, 0.4f)
+                // Pouch center brass clasp
+                .texOffs(12, 28).addBox(-1.0f, 5.0f, 6.0f, 2.0f, 1.5f, 0.3f)
                 // Left side utility pocket
-                .texOffs(46, 0).addBox(-5.5f, 3f, 0.5f, 1f, 5.5f, 3f)
+                .texOffs(46, 0).addBox(-5.0f, 4.0f, 0.8f, 1.0f, 5.5f, 3.0f)
                 // Right side utility pocket
-                .texOffs(46, 9).addBox(4.5f, 3f, 0.5f, 1f, 5.5f, 3f),
-                PartPose.offset(0f, 1f, 2f));
+                .texOffs(46, 10).addBox(4.0f, 4.0f, 0.8f, 1.0f, 5.5f, 3.0f)
+                // Bottom rolled adventurer bedroll with straps
+                .texOffs(28, 16).addBox(-4.5f, 10.0f, 0.5f, 9.0f, 2.5f, 3.5f),
+                PartPose.offset(0.0f, 0.5f, 2.6f));
 
         return LayerDefinition.create(mesh, 64, 32);
     }

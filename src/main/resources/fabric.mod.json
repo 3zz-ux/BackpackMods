@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "backpackmod",
   "version": "${version}",
-  "name": "BackpackMod",
+  "name": "Pixel",
   "description": "Tiered backpacks, unbreakable AOE hammers, tree felling, vein mining, fast smelting and 6x XP.",
   "license": "MIT",
   "environment": "*",
