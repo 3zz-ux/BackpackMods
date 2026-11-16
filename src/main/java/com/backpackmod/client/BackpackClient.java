@@ -8,8 +8,8 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.ModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityRenderLayerRegistrationCallback;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.model.geom.ModelLayerLocation;
@@ -24,7 +24,7 @@ public class BackpackClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         MenuScreens.register(ModRegistry.BACKPACK_MENU, BackpackScreen::new);
-        EntityModelLayerRegistry.registerModelLayer(LAYER, BackpackModel::createLayer);
+        ModelLayerRegistry.registerModelLayer(LAYER, BackpackModel::createLayer);
 
         openKey = KeyMappingHelper.registerKeyMapping(new KeyMapping("key.backpackmod.open", InputConstants.KEY_B,
                 KeyMapping.Category.register(BackpackMod.id("main"))));
@@ -32,7 +32,7 @@ public class BackpackClient implements ClientModInitializer {
             while (openKey.consumeClick()) if (mc.player != null) ClientPlayNetworking.send(new OpenBackpackPayload());
         });
 
-        LivingEntityFeatureRendererRegistrationCallback.EVENT.register((type, renderer, helper, ctx) -> {
+        LivingEntityRenderLayerRegistrationCallback.EVENT.register((type, renderer, helper, ctx) -> {
             if (renderer instanceof AvatarRenderer)
                 helper.register(new BackpackLayer((RenderLayerParent) renderer, new BackpackModel(ctx.bakeLayer(LAYER))));
         });

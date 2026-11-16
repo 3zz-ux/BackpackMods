@@ -8,7 +8,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Final;
@@ -25,8 +25,8 @@ public abstract class AbstractContainerMenuMixin {
     @Shadow public abstract ItemStack getCarried();
 
     @Inject(method = "clicked", at = @At("HEAD"), cancellable = true)
-    private void backpackmod$rightClick(int slotId, int button, ClickType type, Player player, CallbackInfo ci) {
-        if (type != ClickType.PICKUP || button != 1 || slotId < 0 || slotId >= slots.size()) return;
+    private void backpackmod$rightClick(int slotId, int button, ContainerInput type, Player player, CallbackInfo ci) {
+        if (type != ContainerInput.PICKUP || button != 1 || slotId < 0 || slotId >= slots.size()) return;
         if (!getCarried().isEmpty() || (Object) this instanceof BackpackMenu) return;
         Slot slot = slots.get(slotId);
         if (!(slot.container instanceof Inventory || slot.container instanceof EquipContainer)) return;

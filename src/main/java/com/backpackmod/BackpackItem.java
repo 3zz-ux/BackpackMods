@@ -1,6 +1,6 @@
 package com.backpackmod;
 
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -25,7 +25,7 @@ public class BackpackItem extends Item {
 
     public static void open(ServerPlayer sp, ItemStack stack) {
         if (!(stack.getItem() instanceof BackpackItem b)) return;
-        sp.openMenu(new ExtendedScreenHandlerFactory<Integer>() {
+        sp.openMenu(new ExtendedMenuProvider<Integer>() {
             @Override public Integer getScreenOpeningData(ServerPlayer p) { return b.tier.ordinal(); }
             @Override public Component getDisplayName() { return stack.getHoverName(); }
             @Override public AbstractContainerMenu createMenu(int id, Inventory inv, Player p) {

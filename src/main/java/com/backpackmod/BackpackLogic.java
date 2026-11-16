@@ -11,7 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.Consumable;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 
 public final class BackpackLogic {
     public static ItemStack equipped(Player p) { return p.getAttachedOrElse(ModRegistry.EQUIPPED, ItemStack.EMPTY); }

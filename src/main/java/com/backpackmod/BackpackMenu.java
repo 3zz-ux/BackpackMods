@@ -5,7 +5,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
@@ -42,10 +42,10 @@ public class BackpackMenu extends AbstractContainerMenu {
     public ItemStack backpack() { return backpack; }
 
     @Override
-    public void clicked(int slotId, int button, ClickType type, Player player) {
+    public void clicked(int slotId, int button, ContainerInput type, Player player) {
         if (!backpack.isEmpty()) { // can't move the backpack that is currently open
             if (slotId >= 0 && slotId < slots.size() && slots.get(slotId).getItem() == backpack) return;
-            if (type == ClickType.SWAP && button >= 0 && button < 9 && player.getInventory().getItem(button) == backpack) return;
+            if (type == ContainerInput.SWAP && button >= 0 && button < 9 && player.getInventory().getItem(button) == backpack) return;
         }
         super.clicked(slotId, button, type, player);
     }

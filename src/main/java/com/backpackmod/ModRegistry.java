@@ -7,7 +7,10 @@ import java.util.function.Function;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentRegistry;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentSyncPredicate;
 import net.fabricmc.fabric.api.attachment.v1.AttachmentType;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.fabricmc.fabric.api.menu.v1.ExtendedMenuType;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -21,7 +24,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ToolMaterial;
 import net.minecraft.world.item.component.ItemContainerContents;
-import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 
 public final class ModRegistry {
@@ -31,6 +33,7 @@ public final class ModRegistry {
     public static AttachmentType<ItemStack> EQUIPPED;
     public static MenuType<BackpackMenu> BACKPACK_MENU;
     public static RecipeSerializer<UpgradeRecipe> UPGRADE_RECIPE;
+    public static AttachmentType<Boolean> XP_MARK;
 
     private static Item item(String name, Function<Item.Properties, Item> factory, Item.Properties props) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, BackpackMod.id(name));
@@ -52,6 +55,8 @@ public final class ModRegistry {
                 .syncWith(ItemStack.OPTIONAL_STREAM_CODEC, AttachmentSyncPredicate.all())
                 .copyOnDeath());
 
+        XP_MARK = AttachmentRegistry.create(BackpackMod.id("xp_x6"), b -> b.persistent(Codec.BOOL));
+
         for (BackpackTier t : BackpackTier.values()) {
             Item.Properties p = new Item.Properties().stacksTo(1)
                     .component(DataComponents.CONTAINER, ItemContainerContents.EMPTY)
@@ -71,9 +76,9 @@ public final class ModRegistry {
         }
 
         BACKPACK_MENU = Registry.register(BuiltInRegistries.MENU, BackpackMod.id("backpack"),
-                new ExtendedScreenHandlerType<BackpackMenu, Integer>(BackpackMenu::new, ByteBufCodecs.VAR_INT));
+                new ExtendedMenuType<BackpackMenu, Integer>(BackpackMenu::new, ByteBufCodecs.VAR_INT));
         UPGRADE_RECIPE = Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, BackpackMod.id("backpack_upgrade"),
-                new CustomRecipe.Serializer<>(UpgradeRecipe::new));
+                new RecipeSerializer<UpgradeRecipe>(MapCodec.unit(UpgradeRecipe::new), StreamCodec.unit(new UpgradeRecipe())));
     }
     private ModRegistry() {}
 }

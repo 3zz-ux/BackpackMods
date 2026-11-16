@@ -10,14 +10,11 @@ import net.minecraft.world.inventory.Slot;
 /** Procedural background (fills only) so every tier size works without per-tier GUI textures. */
 public class BackpackScreen extends AbstractContainerScreen<BackpackMenu> {
     public BackpackScreen(BackpackMenu menu, Inventory inv, Component title) {
-        super(menu, inv, title);
-        this.imageWidth = BackpackMenu.width(menu.tier());
-        this.imageHeight = BackpackMenu.height(menu.tier());
-        this.inventoryLabelY = 18 + menu.tier().rows * 18 + 4;
+        super(menu, inv, title, BackpackMenu.width(menu.tier()), BackpackMenu.height(menu.tier()));
     }
 
     @Override
-    protected void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(GuiGraphicsExtractor g, int mouseX, int mouseY, float partialTick) {
         int x = leftPos, y = topPos, w = imageWidth, h = imageHeight;
         g.fill(x, y, x + w, y + h, 0xFF000000);
         g.fill(x + 1, y + 1, x + w - 1, y + h - 1, 0xFFC6C6C6);

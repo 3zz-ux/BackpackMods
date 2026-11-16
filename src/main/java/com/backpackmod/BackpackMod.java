@@ -5,7 +5,7 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.fabricmc.fabric.api.creativetab.v1.CreativeModeTabEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.resources.Identifier;
@@ -15,7 +15,6 @@ import net.minecraft.world.item.CreativeModeTabs;
 
 public class BackpackMod implements ModInitializer {
     public static final String MOD_ID = "backpackmod";
-    private static final String XP_TAG = "backpackmod_x6";
 
     public static Identifier id(String path) { return Identifier.fromNamespaceAndPath(MOD_ID, path); }
 
@@ -23,7 +22,7 @@ public class BackpackMod implements ModInitializer {
     public void onInitialize() {
         ModRegistry.init();
 
-        PayloadTypeRegistry.playC2S().register(OpenBackpackPayload.TYPE, OpenBackpackPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(OpenBackpackPayload.TYPE, OpenBackpackPayload.CODEC);
         ServerPlayNetworking.registerGlobalReceiver(OpenBackpackPayload.TYPE,
                 (payload, ctx) -> BackpackLogic.openEquipped(ctx.player()));
 
@@ -42,15 +41,15 @@ public class BackpackMod implements ModInitializer {
 
         // 6x XP: every orb is multiplied exactly once (tagged so reloads/merges don't re-multiply).
         ServerEntityEvents.ENTITY_LOAD.register((entity, level) -> {
-            if (entity instanceof ExperienceOrb orb && !orb.getTags().contains(XP_TAG)) {
-                orb.addTag(XP_TAG);
+            if (entity instanceof ExperienceOrb orb && !orb.hasAttached(ModRegistry.XP_MARK)) {
+                orb.setAttached(ModRegistry.XP_MARK, true);
                 ((com.backpackmod.mixin.ExperienceOrbAccessor) orb).backpackmod$setValue(orb.getValue() * 6);
             }
         });
 
-        ItemGroupEvents.modifyEntriesEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(e -> {
-            ModRegistry.BACKPACKS.values().forEach(e::accept);
-            ModRegistry.HAMMERS.forEach(e::accept);
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(out -> {
+            for (var item : ModRegistry.BACKPACKS.values()) out.accept(item);
+            for (var item : ModRegistry.HAMMERS) out.accept(item);
         });
     }
 }
