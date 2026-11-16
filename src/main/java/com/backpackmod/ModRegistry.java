@@ -34,6 +34,7 @@ public final class ModRegistry {
     public static MenuType<BackpackMenu> BACKPACK_MENU;
     public static RecipeSerializer<UpgradeRecipe> UPGRADE_RECIPE;
     public static AttachmentType<Boolean> XP_MARK;
+    public static Item GOLD_COIN;
 
     private static Item item(String name, Function<Item.Properties, Item> factory, Item.Properties props) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, BackpackMod.id(name));
@@ -74,6 +75,8 @@ public final class ModRegistry {
                     .component(DataComponents.UNBREAKABLE, Unit.INSTANCE); // truly unbreakable
             HAMMERS.add(item(h.name() + "_hammer", props -> new HammerItem(props, h.size()), p));
         }
+
+        GOLD_COIN = item("gold_coin", Item::new, new Item.Properties());
 
         BACKPACK_MENU = Registry.register(BuiltInRegistries.MENU, BackpackMod.id("backpack"),
                 new ExtendedMenuType<BackpackMenu, Integer>(BackpackMenu::new, ByteBufCodecs.VAR_INT));
