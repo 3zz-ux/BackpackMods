@@ -2,7 +2,9 @@ package com.backpackmod;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -11,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.LanternBlock;
@@ -72,10 +75,10 @@ public class PixelStorageItem extends Item {
         BlockState darkOakFence = Blocks.DARK_OAK_FENCE.defaultBlockState();
         BlockState glowstone = Blocks.GLOWSTONE.defaultBlockState();
         BlockState ochreFroglight = Blocks.OCHRE_FROGLIGHT.defaultBlockState();
-        BlockState chain = Blocks.CHAIN.defaultBlockState();
+        BlockState chain = getBlockState("chain", getBlockState("iron_chain", Blocks.IRON_BARS.defaultBlockState()));
         BlockState air = Blocks.AIR.defaultBlockState();
-        BlockState redCarpet = Blocks.RED_CARPET.defaultBlockState();
-        BlockState yellowCarpet = Blocks.YELLOW_CARPET.defaultBlockState();
+        BlockState redCarpet = getBlockState("red_carpet", Blocks.STONE_BRICKS.defaultBlockState());
+        BlockState yellowCarpet = getBlockState("yellow_carpet", Blocks.GOLD_BLOCK.defaultBlockState());
         BlockState potFern = Blocks.POTTED_FERN.defaultBlockState();
         BlockState hangingLantern = Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true);
         BlockState standingLantern = Blocks.LANTERN.defaultBlockState();
@@ -338,5 +341,15 @@ public class PixelStorageItem extends Item {
                 stoneStairs.setValue(StairBlock.FACING, Direction.EAST).setValue(StairBlock.HALF, Half.TOP));
         level.setBlockAndUpdate(origin.offset(2, 4, 0),
                 stoneStairs.setValue(StairBlock.FACING, Direction.WEST).setValue(StairBlock.HALF, Half.TOP));
+    }
+
+    private static BlockState getBlockState(String name, BlockState fallback) {
+        try {
+            Block b = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("minecraft", name));
+            if (b != null && b != Blocks.AIR) {
+                return b.defaultBlockState();
+            }
+        } catch (Exception ignored) {}
+        return fallback;
     }
 }

@@ -2,7 +2,9 @@ package com.backpackmod;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
@@ -11,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CropBlock;
 import net.minecraft.world.level.block.FurnaceBlock;
@@ -60,7 +63,7 @@ public class PixelHouseItem extends Item {
         BlockState lantern = Blocks.LANTERN.defaultBlockState();
         BlockState chest = Blocks.CHEST.defaultBlockState();
         BlockState furnace = Blocks.FURNACE.defaultBlockState().setValue(FurnaceBlock.FACING, Direction.NORTH);
-        BlockState bed = Blocks.RED_BED.defaultBlockState();
+        BlockState bed = getBlockState("red_bed", getBlockState("white_bed", Blocks.OAK_PLANKS.defaultBlockState()));
         BlockState craftingTable = Blocks.CRAFTING_TABLE.defaultBlockState();
         BlockState air = Blocks.AIR.defaultBlockState();
         BlockState dirtPath = Blocks.DIRT_PATH.defaultBlockState();
@@ -225,5 +228,15 @@ public class PixelHouseItem extends Item {
             level.setBlockAndUpdate(origin.offset(x, 11, 9), plankMat);
             level.setBlockAndUpdate(origin.offset(x, 12, 9), isEdge ? Blocks.STONE_BRICK_SLAB.defaultBlockState() : Blocks.OAK_SLAB.defaultBlockState());
         }
+    }
+
+    private static BlockState getBlockState(String name, BlockState fallback) {
+        try {
+            Block b = BuiltInRegistries.BLOCK.getValue(Identifier.fromNamespaceAndPath("minecraft", name));
+            if (b != null && b != Blocks.AIR) {
+                return b.defaultBlockState();
+            }
+        } catch (Exception ignored) {}
+        return fallback;
     }
 }
