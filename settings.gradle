@@ -1,5 +1,3 @@
-rootProject.name = 'Pixel'
-
 pluginManagement {
     repositories {
         maven { url = 'https://maven.fabricmc.net/' }
@@ -13,3 +11,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
+rootProject.name = 'Pixel'
