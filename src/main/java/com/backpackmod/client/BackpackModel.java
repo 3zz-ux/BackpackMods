@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.util.Unit;
 
 public class BackpackModel extends Model<Unit> {
-    public BackpackModel(ModelPart root) { super(root, RenderTypes::entityCutoutNoCull); }
+    public BackpackModel(ModelPart root) { super(root, RenderTypes::entityCutout); }
 
     public static LayerDefinition createLayer() {
         MeshDefinition mesh = new MeshDefinition();
