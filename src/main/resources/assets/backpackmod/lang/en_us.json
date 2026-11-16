@@ -12,7 +12,10 @@
   "item.backpackmod.netherite_hammer": "Netherite Hammer",
   "item.backpackmod.gold_coin": "Pixel",
   "item.backpackmod.pixel": "Pixel",
-  "item.backpackmod.pixel_store_spawner": "Pixel Store Spawner",
+  "item.backpackmod.pixel_storage": "Pixel Storage",
+  "item.backpackmod.pixel_portal": "Pixel Portal",
+  "item.backpackmod.pixel_house": "Pixel House",
   "key.backpackmod.open": "Open Backpack",
-  "key.category.backpackmod.main": "BackpackMod"
+  "key.backpackmod.night_vision": "Toggle Night Vision",
+  "key.category.backpackmod.main": "Pixel"
 }

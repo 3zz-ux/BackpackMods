@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "LIL",
+    "LPL",
+    "SSS"
+  ],
+  "key": {
+    "L": "#minecraft:logs",
+    "I": "minecraft:iron_ingot",
+    "P": "#minecraft:planks",
+    "S": "minecraft:stone_bricks"
+  },
+  "result": {
+    "count": 1,
+    "id": "backpackmod:pixel_house"
+  }
+}

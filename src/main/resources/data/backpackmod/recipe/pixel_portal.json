@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "OOO",
+    "OCO",
+    "OOO"
+  ],
+  "key": {
+    "O": "minecraft:obsidian",
+    "C": "minecraft:crying_obsidian"
+  },
+  "result": {
+    "count": 1,
+    "id": "backpackmod:pixel_portal"
+  }
+}
