@@ -253,9 +253,7 @@ public class PixelStorageItem extends Item {
                         level.setBlockAndUpdate(p.above(), potFern);
                     } else if (dx == 0 && dz == 1) {
                         level.setBlockAndUpdate(p.above(), standingLantern);
-                    } else if (dx == -1) {
-                        level.setBlockAndUpdate(p.above(), (tz == 9) ? goldBlock : diamondBlock);
-                    } else if (dx == 1) {
+                    } else {
                         level.setBlockAndUpdate(p.above(), potFern);
                     }
                 }
@@ -285,25 +283,22 @@ public class PixelStorageItem extends Item {
         level.setBlockAndUpdate(origin.offset(-4, 6, 28), standingLantern);
         level.setBlockAndUpdate(origin.offset(4, 6, 28), standingLantern);
 
-        // 9. COMPLETELY SEALED REAR WALL (Z = 30) - Full Gothic Gable with Stained Glass Cross
+        // 9. COMPLETELY SEALED REAR WALL (Z = 30) - Solid Stone Bricks & Arched Library Niche
         for (int bx = -halfWidth; bx <= halfWidth; bx++) {
             for (int by = 0; by <= 18; by++) {
-                // Gable slope limits
                 int maxGableY = 18 - Math.abs(bx);
                 if (by <= maxGableY) {
                     level.setBlockAndUpdate(origin.offset(bx, by, 30), stoneBricks);
                 }
             }
         }
-        // Glowing decorative stained-glass cross window on the back wall above balcony
-        for (int wy = 7; wy <= 13; wy++) {
-            level.setBlockAndUpdate(origin.offset(0, wy, 30), tintedGlass);
-            level.setBlockAndUpdate(origin.offset(0, wy, 31), ochreFroglight); // back-lighting
+        // Elegant decorative bookshelf & lantern alcove above the balcony (NO cross shape)
+        for (int bx = -2; bx <= 2; bx++) {
+            for (int by = 6; by <= 8; by++) {
+                level.setBlockAndUpdate(origin.offset(bx, by, 29), Blocks.BOOKSHELF.defaultBlockState());
+            }
         }
-        for (int wx = -2; wx <= 2; wx++) {
-            level.setBlockAndUpdate(origin.offset(wx, 11, 30), tintedGlass);
-            level.setBlockAndUpdate(origin.offset(wx, 11, 31), ochreFroglight);
-        }
+        level.setBlockAndUpdate(origin.offset(0, 9, 29), hangingLantern);
 
         // 10. FRONT ENTRANCE FACADE & GRAND PORCH ("الدمّة") (Z = -2 to 0)
         // Complete front wall closing the gable at Z = 0
@@ -341,11 +336,13 @@ public class PixelStorageItem extends Item {
                 .setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER)
                 .setValue(DoorBlock.HINGE, DoorHingeSide.LEFT));
 
-        // Decorative Gothic transom window above door (Y = 3 to 5)
-        level.setBlockAndUpdate(origin.offset(-1, 3, 0), ironBars);
-        level.setBlockAndUpdate(origin.offset(0, 3, 0), ironBars);
-        level.setBlockAndUpdate(origin.offset(-1, 4, 0), stoneStairs.setValue(StairBlock.FACING, Direction.EAST).setValue(StairBlock.HALF, Half.TOP));
-        level.setBlockAndUpdate(origin.offset(0, 4, 0), stoneStairs.setValue(StairBlock.FACING, Direction.WEST).setValue(StairBlock.HALF, Half.TOP));
+        // Completely sealed solid stone wall above door (no opening)
+        level.setBlockAndUpdate(origin.offset(-1, 2, 0), stoneBricks);
+        level.setBlockAndUpdate(origin.offset(0, 2, 0), stoneBricks);
+        level.setBlockAndUpdate(origin.offset(-1, 3, 0), stoneBricks);
+        level.setBlockAndUpdate(origin.offset(0, 3, 0), stoneBricks);
+        level.setBlockAndUpdate(origin.offset(-1, 4, 0), stoneBricks);
+        level.setBlockAndUpdate(origin.offset(0, 4, 0), stoneBricks);
 
         // Grand Entrance Porch Canopy ("الدمّة") extending forward to Z = -1 and -2
         // Support pillars at X = -3 and X = 2 (Z = -2)
