@@ -63,10 +63,10 @@ public final class BackpackLogic {
         }
     }
 
-    /** Auto-Feed upgrade: when hunger has dropped, eat the best-fitting plain food from the backpack. */
+    /** Auto-Feed: eats as soon as hunger drops below 20 so the player is always full! */
     public static void tickFeed(ServerPlayer p) {
         int level = p.getFoodData().getFoodLevel();
-        if (level > 14) return;
+        if (level >= 20) return;
         for (ItemStack pack : all(p)) {
             BackpackItem b = (BackpackItem) pack.getItem();
             if (isOpen(p, pack)) continue;
@@ -77,8 +77,8 @@ public final class BackpackLogic {
                 FoodProperties f = s.get(DataComponents.FOOD);
                 if (f == null || s.has(DataComponents.USE_REMAINDER)) continue;
                 Consumable cons = s.get(DataComponents.CONSUMABLE);
-                if (cons != null && !cons.onConsumeEffects().isEmpty()) continue; // skip rotten flesh, golden apples...
-                if (f.nutrition() <= 20 - level && f.nutrition() > bestNutrition) { bestSlot = i; bestNutrition = f.nutrition(); }
+                if (cons != null && !cons.onConsumeEffects().isEmpty()) continue; // skip harmful items
+                if (bestSlot < 0 || f.nutrition() > bestNutrition) { bestSlot = i; bestNutrition = f.nutrition(); }
             }
             if (bestSlot < 0) continue;
             ItemStack food = c.getItem(bestSlot);

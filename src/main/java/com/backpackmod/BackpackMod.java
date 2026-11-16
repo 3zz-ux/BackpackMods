@@ -35,7 +35,7 @@ public class BackpackMod implements ModInitializer {
             int t = server.getTickCount();
             for (ServerPlayer p : server.getPlayerList().getPlayers()) {
                 if (t % 2 == 0) BackpackLogic.tickMagnet(p);
-                if (t % 20 == 0) BackpackLogic.tickFeed(p);
+                if (t % 4 == 0) BackpackLogic.tickFeed(p);
             }
         });
 
