@@ -51,6 +51,11 @@ public class BackpackMod implements ModInitializer {
             for (var item : ModRegistry.BACKPACKS.values()) out.accept(item);
             for (var item : ModRegistry.HAMMERS) out.accept(item);
             out.accept(ModRegistry.GOLD_COIN);
+            out.accept(ModRegistry.STORE_SPAWNER);
+        });
+
+        CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.OP_BLOCKS).register(out -> {
+            out.accept(ModRegistry.STORE_SPAWNER);
         });
     }
 }

@@ -35,6 +35,7 @@ public final class ModRegistry {
     public static RecipeSerializer<UpgradeRecipe> UPGRADE_RECIPE;
     public static AttachmentType<Boolean> XP_MARK;
     public static Item GOLD_COIN;
+    public static Item STORE_SPAWNER;
 
     private static Item item(String name, Function<Item.Properties, Item> factory, Item.Properties props) {
         ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, BackpackMod.id(name));
@@ -77,6 +78,7 @@ public final class ModRegistry {
         }
 
         GOLD_COIN = item("gold_coin", Item::new, new Item.Properties());
+        STORE_SPAWNER = item("pixel_store_spawner", StoreSpawnerItem::new, new Item.Properties());
 
         BACKPACK_MENU = Registry.register(BuiltInRegistries.MENU, BackpackMod.id("backpack"),
                 new ExtendedMenuType<BackpackMenu, Integer>(BackpackMenu::new, ByteBufCodecs.VAR_INT));
