@@ -32,7 +32,7 @@ public class StoreSpawnerItem extends Item {
         if (level.isClientSide()) return InteractionResult.SUCCESS;
 
         if (player != null && !player.isCreative()) {
-            player.displayClientMessage(Component.literal("§c[Pixel Store] This spawner can only be used by server admins in Creative mode!"), true);
+            player.sendSystemMessage(Component.literal("§c[Pixel Store] This spawner can only be used by server admins in Creative mode!"));
             return InteractionResult.FAIL;
         }
 
@@ -41,7 +41,7 @@ public class StoreSpawnerItem extends Item {
 
         level.playSound(null, center, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.BLOCKS, 1.0f, 1.0f);
         if (player != null) {
-            player.displayClientMessage(Component.literal("§6§l[Pixel Store] §aThe Grand Pixel Store has been constructed successfully!"), false);
+            player.sendSystemMessage(Component.literal("§6§l[Pixel Store] §aThe Grand Pixel Store has been constructed successfully!"));
         }
         return InteractionResult.SUCCESS;
     }
