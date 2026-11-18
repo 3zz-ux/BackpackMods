@@ -24,22 +24,29 @@ import net.minecraft.world.level.block.state.properties.Half;
  * Pixel House Item:
  * Crafted from logs, planks, stone bricks and an iron ingot.
  * 1:1 Complete recreation of the Grand Victorian Alpine Luxury Manor House:
- * - Solid 5-block deep stone/cobblestone foundation ensuring it NEVER floats anywhere
- * - Raised stone terrace plinth with continuous connected oak fences & corner lanterns
- * - Wide, correctly-oriented grand central staircase (Half.BOTTOM, FACING = SOUTH)
+ * - Solid 5-block deep stone/cobblestone foundation ensuring it NEVER floats
+ * anywhere
+ * - Raised stone terrace plinth with continuous connected oak fences & corner
+ * lanterns
+ * - Wide, correctly-oriented grand central staircase (Half.BOTTOM, FACING =
+ * SOUTH)
  * - Ground Floor (Empty structural shell ready for player customisation):
- *   - Timber & stone brick framing with fully connected multi-pane glass windows
- *   - Grand entrance porch with completely open walkway (NO blocking lantern)
- *   - 100% solid exterior walls on all 4 sides with attached side verandas
- *   - Left-side staircase (along East wall: X = 7 to 8, flush against solid wall) ascending to 2nd floor
+ * - Timber & stone brick framing with fully connected multi-pane glass windows
+ * - Grand entrance porch with completely open walkway (NO blocking lantern)
+ * - 100% solid exterior walls on all 4 sides with attached side verandas
+ * - Left-side staircase (along East wall: X = 7 to 8, flush against solid wall)
+ * ascending to 2nd floor
  * - Second Floor:
- *   - Full-width grand front promenade balcony with continuous connected railings
- *   - Clean, spacious middle hall with balcony French doors
- *   - Right-side staircase (along West wall: X = -8 to -7, flush against solid wall) ascending to 3rd floor
+ * - Full-width grand front promenade balcony with continuous connected railings
+ * - Clean, spacious middle hall with balcony French doors
+ * - Right-side staircase (along West wall: X = -8 to -7, flush against solid
+ * wall) ascending to 3rd floor
  * - Third Floor (Magnificent Walk-in Cathedral Penthouse / Attic Suite):
- *   - Solid oak plank floor (Y = 13)
- *   - Massive open interior with 8-block high vaulted cathedral ceiling (Y = 14 to 21)
- *   - Front & rear gable windows with connected glass panes and warm hanging chandeliers
+ * - Solid oak plank floor (Y = 13)
+ * - Massive open interior with 8-block high vaulted cathedral ceiling (Y = 14
+ * to 21)
+ * - Front & rear gable windows with connected glass panes and warm hanging
+ * chandeliers
  * - 100% Enclosed, Watertight, Zero Holes, Completely Sealed Roof & Side Walls
  */
 public class PixelHouseItem extends Item {
@@ -51,14 +58,16 @@ public class PixelHouseItem extends Item {
     public InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
         Player player = ctx.getPlayer();
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (level.isClientSide())
+            return InteractionResult.SUCCESS;
 
         BlockPos origin = ctx.getClickedPos().above();
         buildLuxuryManor(level, origin);
 
         level.playSound(null, origin, SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.BLOCKS, 1.0f, 1.0f);
         if (player != null) {
-            player.sendSystemMessage(Component.literal("§6§l[Pixel House] §aتم تشييد القصر الملكي بالدور الثالث والسلالم المتناسقة وتوصيل الزجاج بالكامل!"));
+            player.sendSystemMessage(Component.literal(
+                    "§6§l[Pixel House] §aتم تشييد القصر الملكي بالدور الثالث والسلالم المتناسقة وتوصيل الزجاج بالكامل!"));
             if (!player.isCreative()) {
                 ctx.getItemInHand().shrink(1);
             }
@@ -86,7 +95,8 @@ public class PixelHouseItem extends Item {
         BlockState potFern = Blocks.POTTED_FERN.defaultBlockState();
         BlockState smoothStone = Blocks.SMOOTH_STONE.defaultBlockState();
 
-        // Connected glass panes: pre-configured with EAST/WEST or NORTH/SOUTH to connect seamlessly
+        // Connected glass panes: pre-configured with EAST/WEST or NORTH/SOUTH to
+        // connect seamlessly
         BlockState glassPaneX = Blocks.GLASS_PANE.defaultBlockState()
                 .setValue(CrossCollisionBlock.EAST, true)
                 .setValue(CrossCollisionBlock.WEST, true);
@@ -97,7 +107,8 @@ public class PixelHouseItem extends Item {
         int minX = -13, maxX = 13;
         int minZ = -8, maxZ = 18;
 
-        // 1. DEEP SOLID STONE BEDROCK FOUNDATION (Y = -5 to -1) - Eliminates floating 100%
+        // 1. DEEP SOLID STONE BEDROCK FOUNDATION (Y = -5 to -1) - Eliminates floating
+        // 100%
         for (int x = minX; x <= maxX; x++) {
             for (int z = minZ; z <= maxZ; z++) {
                 // Clear all space above (Y = 0 to 24)
@@ -139,9 +150,12 @@ public class PixelHouseItem extends Item {
         // Continuous, fully-connected terrace balustrade (Y = 3):
         // Solid stone posts with lanterns at corners and staircase flanks
         // Continuous connected oak fences everywhere else (no broken/gapped fences!)
-        for (int x = -11; x <= -3; x++) level.setBlockAndUpdate(origin.offset(x, 3, 0), oakFence);
-        for (int x = 3; x <= 11; x++) level.setBlockAndUpdate(origin.offset(x, 3, 0), oakFence);
-        for (int x = -11; x <= 11; x++) level.setBlockAndUpdate(origin.offset(x, 3, 18), oakFence);
+        for (int x = -11; x <= -3; x++)
+            level.setBlockAndUpdate(origin.offset(x, 3, 0), oakFence);
+        for (int x = 3; x <= 11; x++)
+            level.setBlockAndUpdate(origin.offset(x, 3, 0), oakFence);
+        for (int x = -11; x <= 11; x++)
+            level.setBlockAndUpdate(origin.offset(x, 3, 18), oakFence);
         for (int z = 1; z <= 17; z++) {
             level.setBlockAndUpdate(origin.offset(-12, 3, z), oakFence);
             level.setBlockAndUpdate(origin.offset(12, 3, z), oakFence);
@@ -155,7 +169,8 @@ public class PixelHouseItem extends Item {
         }
 
         // 3. WIDE GRAND CENTRAL ENTRANCE STAIRCASE (X = -2 to 2, Z = -3 to -1)
-        // Correct facing: FACING = SOUTH (player on path at North climbs South UP to the terrace!)
+        // Correct facing: FACING = SOUTH (player on path at North climbs South UP to
+        // the terrace!)
         for (int step = 0; step <= 2; step++) {
             int z = -3 + step;
             int y = step;
@@ -193,7 +208,7 @@ public class PixelHouseItem extends Item {
                         } else if (isCorner) {
                             mat = strippedLog; // vertical timber pillar
                         } else {
-                            mat = oakPlanks;   // warm wood siding
+                            mat = oakPlanks; // warm wood siding
                         }
                         level.setBlockAndUpdate(origin.offset(x, y, z), mat);
                     }
@@ -201,7 +216,7 @@ public class PixelHouseItem extends Item {
             }
         }
 
-        // GRAND ENTRANCE PORCH (X = -2 to 2, Z = 3 to 4, Y = 3 to 6)
+        // GRAND LUXURY ENTRANCE PORTICO (Image 2 fix - enhanced shape, beautiful gabled A-frame arch)
         // Center Door at X = 0, Z = 4
         level.setBlockAndUpdate(origin.offset(0, 3, 4), oakDoor
                 .setValue(DoorBlock.FACING, Direction.SOUTH)
@@ -210,30 +225,59 @@ public class PixelHouseItem extends Item {
                 .setValue(DoorBlock.FACING, Direction.SOUTH)
                 .setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER));
 
-        // Entrance walkway is 100% CLEAR - NO BLOCKING LANTERNS!
-        level.setBlockAndUpdate(origin.offset(0, 3, 3), air);
-        level.setBlockAndUpdate(origin.offset(0, 4, 3), air); // Completely clear!
+        // Completely clear 2-block high walkway under porch (Z = 2 and 3)
+        for (int pz = 2; pz <= 3; pz++) {
+            for (int px = -1; px <= 1; px++) {
+                level.setBlockAndUpdate(origin.offset(px, 3, pz), air);
+                level.setBlockAndUpdate(origin.offset(px, 4, pz), air);
+            }
+        }
 
-        // Grand Porch Columns at X = -2 and X = 2, Z = 3
+        // Grand Portico Columns at X = -2 and X = 2, Z = 3
         level.setBlockAndUpdate(origin.offset(-2, 3, 3), stoneBricks);
         level.setBlockAndUpdate(origin.offset(-2, 4, 3), strippedLog);
+        level.setBlockAndUpdate(origin.offset(-2, 5, 3), strippedLog);
+        level.setBlockAndUpdate(origin.offset(-2, 6, 3), lantern); // Lantern safely on column top
+
         level.setBlockAndUpdate(origin.offset(2, 3, 3), stoneBricks);
         level.setBlockAndUpdate(origin.offset(2, 4, 3), strippedLog);
+        level.setBlockAndUpdate(origin.offset(2, 5, 3), strippedLog);
+        level.setBlockAndUpdate(origin.offset(2, 6, 3), lantern); // Lantern safely on column top
 
-        // Lanterns placed SAFELY on the porch columns where they never block the player
-        level.setBlockAndUpdate(origin.offset(-2, 5, 3), lantern);
-        level.setBlockAndUpdate(origin.offset(2, 5, 3), lantern);
+        // Curved Timber Archway at Y = 5 (framing the doorway with vaulted curved wood)
+        level.setBlockAndUpdate(origin.offset(-1, 5, 3),
+                oakStairs.setValue(StairBlock.FACING, Direction.EAST).setValue(StairBlock.HALF, Half.TOP));
+        level.setBlockAndUpdate(origin.offset(0, 5, 3), oakPlanks);
+        level.setBlockAndUpdate(origin.offset(1, 5, 3),
+                oakStairs.setValue(StairBlock.FACING, Direction.WEST).setValue(StairBlock.HALF, Half.TOP));
 
-        // Clean, elegant front porch canopy at Y = 5 (NO protruding stairs - as requested: "احذف الدرج")
-        for (int px = -2; px <= 2; px++) {
-            level.setBlockAndUpdate(origin.offset(px, 5, 3), oakSlab);
-            level.setBlockAndUpdate(origin.offset(px, 6, 3), air); // Completely removed the protruding stairs!
-        }
+        // Peaked Portico Gable Roof at Y = 6 & 7 (Z = 3)
+        level.setBlockAndUpdate(origin.offset(-1, 6, 3),
+                oakStairs.setValue(StairBlock.FACING, Direction.EAST).setValue(StairBlock.HALF, Half.BOTTOM));
+        level.setBlockAndUpdate(origin.offset(0, 6, 3), oakPlanks);
+        level.setBlockAndUpdate(origin.offset(1, 6, 3),
+                oakStairs.setValue(StairBlock.FACING, Direction.WEST).setValue(StairBlock.HALF, Half.BOTTOM));
+        level.setBlockAndUpdate(origin.offset(0, 7, 3), oakSlab); // Apex ridge crest
+
+        // Front Portico Overhang at Z = 2
+        level.setBlockAndUpdate(origin.offset(-2, 3, 2), potFern);
+        level.setBlockAndUpdate(origin.offset(2, 3, 2), potFern);
+        level.setBlockAndUpdate(origin.offset(-2, 4, 2), oakFence);
+        level.setBlockAndUpdate(origin.offset(2, 4, 2), oakFence);
+        level.setBlockAndUpdate(origin.offset(-2, 5, 2), oakFence);
+        level.setBlockAndUpdate(origin.offset(2, 5, 2), oakFence);
+
+        level.setBlockAndUpdate(origin.offset(-1, 5, 2),
+                oakStairs.setValue(StairBlock.FACING, Direction.EAST).setValue(StairBlock.HALF, Half.BOTTOM));
         level.setBlockAndUpdate(origin.offset(0, 5, 2), oakSlab);
-        level.setBlockAndUpdate(origin.offset(0, 6, 2), air);
+        level.setBlockAndUpdate(origin.offset(1, 5, 2),
+                oakStairs.setValue(StairBlock.FACING, Direction.WEST).setValue(StairBlock.HALF, Half.BOTTOM));
+        level.setBlockAndUpdate(origin.offset(0, 6, 2), oakSlab);
 
-        // Fully-Framed, Fully-Connected Multi-Pane Glass Windows on Front Facade (X-axis)
-        // Frame: X = -7 and X = -4 are solid oak planks. Bottom is stoneBricks. Top is oakPlanks.
+        // Fully-Framed, Fully-Connected Multi-Pane Glass Windows on Front Facade
+        // (X-axis)
+        // Frame: X = -7 and X = -4 are solid oak planks. Bottom is stoneBricks. Top is
+        // oakPlanks.
         // Panes at X = -6, -5 connect with EAST=true, WEST=true!
         int[] winX = { -6, -5, 5, 6 };
         for (int wx : winX) {
@@ -259,8 +303,10 @@ public class PixelHouseItem extends Item {
             level.setBlockAndUpdate(origin.offset(11, 5, z), strippedLog);
         }
         for (int z = 4; z <= 16; z++) {
-            for (int sx = -11; sx <= -10; sx++) level.setBlockAndUpdate(origin.offset(sx, 6, z), oakSlab);
-            for (int sx = 10; sx <= 11; sx++) level.setBlockAndUpdate(origin.offset(sx, 6, z), oakSlab);
+            for (int sx = -11; sx <= -10; sx++)
+                level.setBlockAndUpdate(origin.offset(sx, 6, z), oakSlab);
+            for (int sx = 10; sx <= 11; sx++)
+                level.setBlockAndUpdate(origin.offset(sx, 6, z), oakSlab);
         }
 
         // 5. FIRST FLOOR INTERIOR (Y = 3 to 7) - CLEAN, UNCLUTTERED, ZERO FURNITURE!
@@ -331,7 +377,8 @@ public class PixelHouseItem extends Item {
 
         // 6. SECOND FLOOR & BALCONY FACADE (Y = 8 to 12)
         // Second Floor Exterior Walls (Y = 9 to 13, X = -9 to 9, Z = 4 to 16)
-        // Uniform width X = -9 to 9 extending all the way up to Y = 13 (sealing side walls 100%!)
+        // Uniform width X = -9 to 9 extending all the way up to Y = 13 (sealing side
+        // walls 100%!)
         for (int x = -9; x <= 9; x++) {
             for (int z = 4; z <= 16; z++) {
                 boolean isCorner = (Math.abs(x) == 9 && (z == 4 || z == 10 || z == 16));
@@ -351,7 +398,7 @@ public class PixelHouseItem extends Item {
         level.setBlockAndUpdate(origin.offset(0, 10, 3), lantern); // decorative warm lantern
 
         // Second Floor Windows on Front Facade with Flower Boxes (connected panes)
-        for (int wx : new int[]{ -5, 5 }) {
+        for (int wx : new int[] { -5, 5 }) {
             level.setBlockAndUpdate(origin.offset(wx, 10, 4), glassPaneX);
             level.setBlockAndUpdate(origin.offset(wx, 11, 4), glassPaneX);
             level.setBlockAndUpdate(origin.offset(wx, 9, 3), potFern);
@@ -360,7 +407,7 @@ public class PixelHouseItem extends Item {
         // SECOND FLOOR INTERIOR (Y = 9 to 12)
         level.setBlockAndUpdate(origin.offset(0, 12, 10), hangingLantern);
 
-        // 7. MAJESTIC ALPINE ROOF (Y = 13 to 22) - Built first so interior clearing is 100% clean!
+        // 7. MAJESTIC ALPINE ROOF (Y = 13 to 22) - 100% WATERTIGHT, ZERO HOLES!
         // Roof runs from front (Z = 4) to back (Z = 16)
         // Slopes down West and East:
         // West slope (X < 0): FACING = EAST (steps descend towards West)
@@ -368,7 +415,6 @@ public class PixelHouseItem extends Item {
         for (int z = 4; z <= 16; z++) {
             boolean isEaveEdge = (z == 4 || z == 16);
             BlockState trimStair = isEaveEdge ? stoneStairs : oakStairs;
-            boolean isStairwellZ = (z >= 8 && z <= 15);
 
             // Slope 1: X = ±9, Y = 13
             level.setBlockAndUpdate(origin.offset(-9, 13, z),
@@ -381,9 +427,7 @@ public class PixelHouseItem extends Item {
                     trimStair.setValue(StairBlock.FACING, Direction.EAST).setValue(StairBlock.HALF, Half.BOTTOM));
             level.setBlockAndUpdate(origin.offset(8, 14, z),
                     trimStair.setValue(StairBlock.FACING, Direction.WEST).setValue(StairBlock.HALF, Half.BOTTOM));
-            if (!isStairwellZ) {
-                level.setBlockAndUpdate(origin.offset(-8, 13, z), oakPlanks);
-            }
+            level.setBlockAndUpdate(origin.offset(-8, 13, z), oakPlanks);
             level.setBlockAndUpdate(origin.offset(8, 13, z), oakPlanks);
 
             // Slope 3: X = ±7, Y = 15
@@ -391,9 +435,7 @@ public class PixelHouseItem extends Item {
                     trimStair.setValue(StairBlock.FACING, Direction.EAST).setValue(StairBlock.HALF, Half.BOTTOM));
             level.setBlockAndUpdate(origin.offset(7, 15, z),
                     trimStair.setValue(StairBlock.FACING, Direction.WEST).setValue(StairBlock.HALF, Half.BOTTOM));
-            if (!isStairwellZ) {
-                level.setBlockAndUpdate(origin.offset(-7, 14, z), oakPlanks);
-            }
+            level.setBlockAndUpdate(origin.offset(-7, 14, z), oakPlanks);
             level.setBlockAndUpdate(origin.offset(7, 14, z), oakPlanks);
 
             // Slope 4: X = ±6, Y = 16
@@ -401,9 +443,7 @@ public class PixelHouseItem extends Item {
                     trimStair.setValue(StairBlock.FACING, Direction.EAST).setValue(StairBlock.HALF, Half.BOTTOM));
             level.setBlockAndUpdate(origin.offset(6, 16, z),
                     trimStair.setValue(StairBlock.FACING, Direction.WEST).setValue(StairBlock.HALF, Half.BOTTOM));
-            if (!isStairwellZ) {
-                level.setBlockAndUpdate(origin.offset(-6, 15, z), oakPlanks);
-            }
+            level.setBlockAndUpdate(origin.offset(-6, 15, z), oakPlanks);
             level.setBlockAndUpdate(origin.offset(6, 15, z), oakPlanks);
 
             // Slope 5: X = ±5, Y = 17
@@ -452,7 +492,7 @@ public class PixelHouseItem extends Item {
         }
 
         // Close front and rear gable walls completely with solid oak planks (Z = 4 and Z = 16)
-        for (int gz : new int[]{ 4, 16 }) {
+        for (int gz : new int[] { 4, 16 }) {
             for (int gx = -8; gx <= 8; gx++) {
                 int maxGy = 21 - Math.abs(gx);
                 for (int gy = 13; gy <= maxGy; gy++) {
@@ -478,11 +518,11 @@ public class PixelHouseItem extends Item {
             }
         }
 
-        // CLEAR AIR IN ENTIRE 3RD FLOOR ROOM (Y = 14 to 20, X = -6 to 6, Z = 5 to 15)
-        for (int x = -6; x <= 6; x++) {
+        // CLEAR AIR ONLY INSIDE THE CATHEDRAL ROOM (NEVER TOUCHES EXTERIOR ROOF TILES!)
+        for (int x = -5; x <= 5; x++) {
             for (int z = 5; z <= 15; z++) {
-                int maxH = 21 - Math.abs(x);
-                for (int y = 14; y < maxH; y++) {
+                int maxH = 20 - Math.abs(x);
+                for (int y = 14; y <= maxH; y++) {
                     level.setBlockAndUpdate(origin.offset(x, y, z), air);
                 }
             }
@@ -493,26 +533,26 @@ public class PixelHouseItem extends Item {
         level.setBlockAndUpdate(origin.offset(0, 19, 10), hangingLantern);
         level.setBlockAndUpdate(origin.offset(0, 19, 13), hangingLantern);
 
-        // 9. 2ND FLOOR TO 3RD FLOOR STAIRCASE (Along the RIGHT/West wall: X = -8 to -7)
-        // Solid floor on 2nd floor at Y = 8 (NO sunken depression! Starts cleanly ON TOP at Y = 9!)
-        for (int sx = -8; sx <= -7; sx++) {
+        // 9. 2ND FLOOR TO 3RD FLOOR STAIRCASE (Along West side: X = -5 to -4)
+        // Solid floor on 2nd floor at Y = 8 underneath
+        for (int sx = -5; sx <= -4; sx++) {
             for (int z = 7; z <= 15; z++) {
                 level.setBlockAndUpdate(origin.offset(sx, 8, z), oakPlanks);
             }
         }
 
-        // Ascends South from Z = 9 to 13, Y = 9 to 13
+        // Ascends South from Z = 8 to 12, Y = 9 to 13
         int[][] steps3rd = {
-                { 9, 9 },
-                { 10, 10 },
-                { 11, 11 },
-                { 12, 12 },
-                { 13, 13 } // Image 2 fix: This top step is oakStairs, replacing the two solid blocks!
+                { 8, 9 },
+                { 9, 10 },
+                { 10, 11 },
+                { 11, 12 },
+                { 12, 13 } // Top step is oakStairs facing South, stepping smoothly onto 3rd floor at Z = 13!
         };
         for (int[] st : steps3rd) {
             int sz = st[0];
             int sy = st[1];
-            for (int sx = -8; sx <= -7; sx++) {
+            for (int sx = -5; sx <= -4; sx++) {
                 // Solid oak planks under each step up to sy - 1
                 for (int fy = 8; fy < sy; fy++) {
                     level.setBlockAndUpdate(origin.offset(sx, fy, sz), oakPlanks);
@@ -521,46 +561,42 @@ public class PixelHouseItem extends Item {
                 level.setBlockAndUpdate(origin.offset(sx, sy, sz),
                         oakStairs.setValue(StairBlock.FACING, Direction.SOUTH).setValue(StairBlock.HALF, Half.BOTTOM));
             }
-            // Ensure exterior wall at X = -9 behind stairs is 100% solid wood (no holes!)
-            for (int wy = 8; wy <= 15; wy++) {
-                level.setBlockAndUpdate(origin.offset(-9, wy, sz), oakPlanks);
-            }
         }
 
-        // Solid Landing on 3rd floor at Z = 14 and 15 (Y = 13)
-        for (int sx = -8; sx <= -7; sx++) {
+        // Solid Landing on 3rd floor at Z = 13, 14, 15 (Y = 13)
+        for (int sx = -5; sx <= -4; sx++) {
+            level.setBlockAndUpdate(origin.offset(sx, 13, 13), oakPlanks);
             level.setBlockAndUpdate(origin.offset(sx, 13, 14), oakPlanks);
             level.setBlockAndUpdate(origin.offset(sx, 13, 15), oakPlanks);
         }
 
-        // Headroom & Opening into 3rd floor (Image 1 fix - spacious headroom, seamless walk-in!)
-        for (int sx = -8; sx <= -7; sx++) {
-            for (int z = 9; z <= 12; z++) {
-                level.setBlockAndUpdate(origin.offset(sx, 13, z), air);
+        // Opening in 2nd floor ceiling above staircase (X = -5 to -4, Z = 8 to 12)
+        for (int sx = -5; sx <= -4; sx++) {
+            for (int z = 8; z <= 12; z++) {
+                level.setBlockAndUpdate(origin.offset(sx, 8, z), air);
             }
-            for (int z = 9; z <= 15; z++) {
-                for (int hy = 14; hy <= 18; hy++) {
-                    level.setBlockAndUpdate(origin.offset(sx, hy, z), air);
-                }
-            }
-        }
-        // Wide opening from landing at Z = 13 to 15 directly into the 3rd floor cathedral room
-        for (int x = -7; x <= -5; x++) {
-            for (int z = 13; z <= 15; z++) {
-                for (int hy = 14; hy <= 18; hy++) {
-                    level.setBlockAndUpdate(origin.offset(x, hy, z), air);
-                }
+            for (int z = 8; z <= 14; z++) {
+                level.setBlockAndUpdate(origin.offset(sx, 9, z), air);
+                level.setBlockAndUpdate(origin.offset(sx, 10, z), air);
+                level.setBlockAndUpdate(origin.offset(sx, 11, z), air);
+                level.setBlockAndUpdate(origin.offset(sx, 12, z), air);
             }
         }
 
-        // Complete protective balustrade on 3rd floor around stair opening:
-        // East side along X = -6:
-        for (int bz = 9; bz <= 12; bz++) {
-            level.setBlockAndUpdate(origin.offset(-6, 14, bz), oakFence);
+        // Complete protective balustrade on 2nd floor around stair opening:
+        for (int bz = 8; bz <= 12; bz++) {
+            level.setBlockAndUpdate(origin.offset(-3, 9, bz), oakFence);
         }
-        // North end: Connects from X = -6 across to the West wall at X = -9:
-        level.setBlockAndUpdate(origin.offset(-6, 14, 8), oakFence);
-        level.setBlockAndUpdate(origin.offset(-7, 14, 8), oakFence);
-        level.setBlockAndUpdate(origin.offset(-8, 14, 8), oakFence);
+        level.setBlockAndUpdate(origin.offset(-3, 9, 7), oakFence);
+        level.setBlockAndUpdate(origin.offset(-4, 9, 7), oakFence);
+        level.setBlockAndUpdate(origin.offset(-5, 9, 7), oakFence);
+
+        // Complete protective balustrade on 3rd floor around stair opening:
+        for (int bz = 8; bz <= 12; bz++) {
+            level.setBlockAndUpdate(origin.offset(-3, 14, bz), oakFence);
+        }
+        level.setBlockAndUpdate(origin.offset(-3, 14, 7), oakFence);
+        level.setBlockAndUpdate(origin.offset(-4, 14, 7), oakFence);
+        level.setBlockAndUpdate(origin.offset(-5, 14, 7), oakFence);
     }
 }
