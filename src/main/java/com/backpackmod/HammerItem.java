@@ -12,12 +12,14 @@ public class HammerItem extends Item {
     public HammerItem(Properties p, int size) { super(p); this.size = size; }
     public int size() { return size; }
 
-    /** Square of size x size blocks in the plane perpendicular to the struck face. */
+    /** Rectangle of size x size blocks in the plane perpendicular to the struck face.
+     *  Supports both odd sizes (symmetric) and even sizes (extends one extra in positive directions). */
     public static List<BlockPos> area(BlockPos c, Direction face, int size) {
-        int r = (size - 1) / 2;
+        int rLow = (size - 1) / 2;   // e.g. size=4 -> rLow=1, size=5 -> rLow=2
+        int rHigh = size / 2;         // e.g. size=4 -> rHigh=2, size=5 -> rHigh=2
         List<BlockPos> out = new ArrayList<>();
-        for (int a = -r; a <= r; a++)
-            for (int b = -r; b <= r; b++)
+        for (int a = -rLow; a <= rHigh; a++)
+            for (int b = -rLow; b <= rHigh; b++)
                 switch (face.getAxis()) {
                     case X -> out.add(c.offset(0, a, b));
                     case Y -> out.add(c.offset(a, 0, b));

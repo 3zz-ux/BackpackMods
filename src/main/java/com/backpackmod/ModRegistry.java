@@ -70,9 +70,9 @@ public final class ModRegistry {
         }
 
         for (Hammer h : List.of(
-                new Hammer("wooden", ToolMaterial.WOOD, 3), new Hammer("stone", ToolMaterial.STONE, 3),
-                new Hammer("iron", ToolMaterial.IRON, 3), new Hammer("golden", ToolMaterial.GOLD, 3),
-                new Hammer("diamond", ToolMaterial.DIAMOND, 5), new Hammer("netherite", ToolMaterial.NETHERITE, 7))) {
+                new Hammer("wooden", ToolMaterial.WOOD, 3), new Hammer("stone", ToolMaterial.STONE, 4),
+                new Hammer("iron", ToolMaterial.IRON, 5), new Hammer("golden", ToolMaterial.GOLD, 5),
+                new Hammer("diamond", ToolMaterial.DIAMOND, 6), new Hammer("netherite", ToolMaterial.NETHERITE, 7))) {
             Item.Properties p = new Item.Properties()
                     .pickaxe(h.material(), 1.0f, -2.8f)              // tool component, enchantability, attributes
                     .component(DataComponents.UNBREAKABLE, Unit.INSTANCE); // truly unbreakable
