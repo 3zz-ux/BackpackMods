@@ -16,8 +16,6 @@ import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.renderer.entity.RenderLayerParent;
 import net.minecraft.client.renderer.entity.player.AvatarRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class BackpackClient implements ClientModInitializer {
@@ -25,6 +23,10 @@ public class BackpackClient implements ClientModInitializer {
     private static KeyMapping openKey;
     private static KeyMapping nightVisionKey;
     private static boolean nightVisionActive = false;
+
+    public static boolean isNightVisionActive() {
+        return nightVisionActive;
+    }
 
     @Override
     public void onInitializeClient() {
@@ -45,20 +47,10 @@ public class BackpackClient implements ClientModInitializer {
                 if (mc.player != null) {
                     nightVisionActive = !nightVisionActive;
                     if (nightVisionActive) {
-                        mc.player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 400, 0, false, false, false));
                         mc.player.sendSystemMessage(Component.literal("§6§l[Pixel] §aNight Vision: ON"));
                     } else {
-                        mc.player.removeEffect(MobEffects.NIGHT_VISION);
                         mc.player.sendSystemMessage(Component.literal("§6§l[Pixel] §cNight Vision: OFF"));
                     }
-                }
-            }
-
-            // Keep night vision active without particles or potion icons while enabled
-            if (nightVisionActive && mc.player != null) {
-                MobEffectInstance current = mc.player.getEffect(MobEffects.NIGHT_VISION);
-                if (current == null || current.getDuration() < 100) {
-                    mc.player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 400, 0, false, false, false));
                 }
             }
         });
