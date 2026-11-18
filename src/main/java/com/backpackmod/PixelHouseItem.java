@@ -370,7 +370,8 @@ public class PixelHouseItem extends Item {
         for (int bz = 8; bz <= 13; bz++) {
             level.setBlockAndUpdate(origin.offset(6, 9, bz), oakFence);
         }
-        // Complete the North end: Connects from X = 6 across X = 7, 8 all the way to the East wall at X = 9!
+        // Complete the North end: Connects from X = 6 across X = 7, 8 all the way to
+        // the East wall at X = 9!
         level.setBlockAndUpdate(origin.offset(6, 9, 7), oakFence);
         level.setBlockAndUpdate(origin.offset(7, 9, 7), oakFence);
         level.setBlockAndUpdate(origin.offset(8, 9, 7), oakFence);
@@ -534,10 +535,19 @@ public class PixelHouseItem extends Item {
         level.setBlockAndUpdate(origin.offset(0, 19, 13), hangingLantern);
 
         // 9. 2ND FLOOR TO 3RD FLOOR STAIRCASE (Along West side: X = -5 to -4)
-        // Solid floor on 2nd floor at Y = 8 underneath
-        for (int sx = -5; sx <= -4; sx++) {
-            for (int z = 7; z <= 15; z++) {
+        // Ensure 2nd floor floor at Y = 8 is 100% solid oak planks - ZERO HOLES AT Y = 8!
+        for (int sx = -8; sx <= 0; sx++) {
+            for (int z = 4; z <= 16; z++) {
                 level.setBlockAndUpdate(origin.offset(sx, 8, z), oakPlanks);
+            }
+        }
+
+        // Clear headroom in 2nd floor walkway and stair approach (Y = 9 to 12)
+        for (int sx = -5; sx <= -4; sx++) {
+            for (int z = 6; z <= 15; z++) {
+                for (int y = 9; y <= 12; y++) {
+                    level.setBlockAndUpdate(origin.offset(sx, y, z), air);
+                }
             }
         }
 
@@ -547,7 +557,7 @@ public class PixelHouseItem extends Item {
                 { 9, 10 },
                 { 10, 11 },
                 { 11, 12 },
-                { 12, 13 } // Top step is oakStairs facing South, stepping smoothly onto 3rd floor at Z = 13!
+                { 12, 13 } // Top step is oakStairs facing South at Y = 13!
         };
         for (int[] st : steps3rd) {
             int sz = st[0];
@@ -563,35 +573,35 @@ public class PixelHouseItem extends Item {
             }
         }
 
-        // Solid Landing on 3rd floor at Z = 13, 14, 15 (Y = 13)
+        // Solid Landing on 3rd floor at Z = 13, 14, 15 (Y = 13) and solid timber support below
         for (int sx = -5; sx <= -4; sx++) {
-            level.setBlockAndUpdate(origin.offset(sx, 13, 13), oakPlanks);
-            level.setBlockAndUpdate(origin.offset(sx, 13, 14), oakPlanks);
-            level.setBlockAndUpdate(origin.offset(sx, 13, 15), oakPlanks);
-        }
-
-        // Opening in 2nd floor ceiling above staircase (X = -5 to -4, Z = 8 to 12)
-        for (int sx = -5; sx <= -4; sx++) {
-            for (int z = 8; z <= 12; z++) {
-                level.setBlockAndUpdate(origin.offset(sx, 8, z), air);
-            }
-            for (int z = 8; z <= 14; z++) {
-                level.setBlockAndUpdate(origin.offset(sx, 9, z), air);
-                level.setBlockAndUpdate(origin.offset(sx, 10, z), air);
-                level.setBlockAndUpdate(origin.offset(sx, 11, z), air);
-                level.setBlockAndUpdate(origin.offset(sx, 12, z), air);
+            for (int z = 13; z <= 15; z++) {
+                for (int fy = 8; fy <= 13; fy++) {
+                    level.setBlockAndUpdate(origin.offset(sx, fy, z), oakPlanks);
+                }
             }
         }
 
-        // Complete protective balustrade on 2nd floor around stair opening:
-        for (int bz = 8; bz <= 12; bz++) {
-            level.setBlockAndUpdate(origin.offset(-3, 9, bz), oakFence);
+        // Opening strictly in 3rd floor floor / 2nd floor ceiling (Y = 13) for the stairwell!
+        // (Z = 8 to 11 at Y = 13 are opened to air so player walks smoothly through into 3rd floor)
+        for (int sx = -5; sx <= -4; sx++) {
+            for (int z = 8; z <= 11; z++) {
+                level.setBlockAndUpdate(origin.offset(sx, 13, z), air);
+            }
         }
-        level.setBlockAndUpdate(origin.offset(-3, 9, 7), oakFence);
-        level.setBlockAndUpdate(origin.offset(-4, 9, 7), oakFence);
-        level.setBlockAndUpdate(origin.offset(-5, 9, 7), oakFence);
 
-        // Complete protective balustrade on 3rd floor around stair opening:
+        // Headroom on 3rd floor above the stairwell and landing (Y = 14 to 17)
+        for (int sx = -5; sx <= -4; sx++) {
+            for (int z = 8; z <= 15; z++) {
+                int maxH = 20 - Math.abs(sx);
+                for (int y = 14; y <= Math.min(17, maxH); y++) {
+                    level.setBlockAndUpdate(origin.offset(sx, y, z), air);
+                }
+            }
+        }
+
+        // Complete protective balustrade on THIRD FLOOR ONLY (Y = 14) around stair opening:
+        // (Zero fences on 2nd floor, leaving stair approach at Z = 7 wide open!)
         for (int bz = 8; bz <= 12; bz++) {
             level.setBlockAndUpdate(origin.offset(-3, 14, bz), oakFence);
         }
